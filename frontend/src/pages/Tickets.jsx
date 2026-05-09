@@ -181,7 +181,7 @@ const Tickets = () => {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ backgroundColor: '#45475a' }}>
-              {['Title', 'Asset', 'Priority', 'Status', 'Reporter', 'Update Status', 'Actions'].map(h => (
+              {['Title', 'Asset', 'Priority', 'AI Suggestion', 'Status', 'Reporter', 'Update Status', 'Actions'].map(h => (
                 <th key={h} style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '13px', fontWeight: '500', textAlign: 'left' }}>{h}</th>
               ))}
             </tr>
@@ -189,7 +189,7 @@ const Tickets = () => {
           <tbody>
             {tickets.length === 0 ? (
               <tr>
-                <td colSpan={7} style={{ padding: '2rem', textAlign: 'center', color: '#a6adc8', fontSize: '14px' }}>
+                <td colSpan={8} style={{ padding: '2rem', textAlign: 'center', color: '#a6adc8', fontSize: '14px' }}>
                   No tickets yet. Create your first ticket above.
                 </td>
               </tr>
@@ -206,6 +206,31 @@ const Tickets = () => {
                     }}>
                       {ticket.priority}
                     </span>
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    {ticket.ai_priority_suggestion ? (
+                      <div>
+                        <span style={{
+                          fontSize: '12px', padding: '2px 10px', borderRadius: '99px',
+                          backgroundColor: priorityColors[ticket.ai_priority_suggestion]?.bg,
+                          color: priorityColors[ticket.ai_priority_suggestion]?.text,
+                        }}>
+                          {ticket.ai_priority_suggestion}
+                        </span>
+                        {ticket.ai_category && (
+                          <div style={{ fontSize: '11px', color: '#a6adc8', marginTop: '4px' }}>
+                            {ticket.ai_category}
+                          </div>
+                        )}
+                        {ticket.ai_recommendation && (
+                          <div style={{ fontSize: '11px', color: '#a6adc8', marginTop: '4px', maxWidth: '200px' }}>
+                            {ticket.ai_recommendation}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span style={{ color: '#45475a', fontSize: '12px' }}>—</span>
+                    )}
                   </td>
                   <td style={{ padding: '12px 16px' }}>
                     <span style={{
