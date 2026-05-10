@@ -4,6 +4,8 @@ const helmet = require('helmet');
 require('dotenv').config();
 console.log('DATABASE_URL set:', !!process.env.DATABASE_URL);
 console.log('JWT_SECRET set:', !!process.env.JWT_SECRET);
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('DB_USER:', process.env.DB_USER);
 
 const authRoutes = require('./routes/auth');
 const assetRoutes = require('./routes/assets');
