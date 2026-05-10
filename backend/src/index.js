@@ -18,6 +18,8 @@ app.use(helmet());
 app.use(cors({
   origin: [
     'https://asset-incident-management.vercel.app',
+    'https://asset-incident-management-nl1l0yzva-joseph-yarijarlas-projects.vercel.app',
+    /\.vercel\.app$/,
     'http://localhost:5173'
   ],
   credentials: true
