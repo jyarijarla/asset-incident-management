@@ -190,5 +190,3 @@ const getTicketStats = async (req, res) => {
 };
 
 module.exports = { getAllTickets, getTicketById, createTicket, updateTicket, deleteTicket, getTicketStats };
-
-module.exports = { getAllTickets, getTicketById, createTicket, updateTicket, deleteTicket };
