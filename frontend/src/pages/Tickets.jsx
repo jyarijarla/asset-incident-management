@@ -23,6 +23,9 @@ const Tickets = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterPriority, setFilterPriority] = useState('');
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -86,14 +89,25 @@ const Tickets = () => {
     }
   };
 
+  const filteredTickets = tickets.filter(ticket => {
+    const matchesSearch = search === '' ||
+      ticket.title.toLowerCase().includes(search.toLowerCase()) ||
+      (ticket.asset_name && ticket.asset_name.toLowerCase().includes(search.toLowerCase()));
+    const matchesStatus = filterStatus === '' || ticket.status === filterStatus;
+    const matchesPriority = filterPriority === '' || ticket.priority === filterPriority;
+    return matchesSearch && matchesStatus && matchesPriority;
+  });
+
   if (loading) return <div style={{ padding: '2rem', color: '#cdd6f4' }}>Loading...</div>;
 
   return (
     <div style={{ padding: '2rem', backgroundColor: '#1e1e2e', minHeight: '100vh' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ color: '#cdd6f4', fontSize: '22px', margin: '0 0 4px' }}>Tickets</h1>
-          <p style={{ color: '#a6adc8', fontSize: '14px', margin: 0 }}>{tickets.length} total tickets</p>
+          <p style={{ color: '#a6adc8', fontSize: '14px', margin: 0 }}>
+            {filteredTickets.length} of {tickets.length} tickets
+          </p>
         </div>
         {['admin', 'technician'].includes(user.role) && (
           <button
@@ -110,6 +124,82 @@ const Tickets = () => {
             }}
           >
             {showForm ? 'Cancel' : '+ New Ticket'}
+          </button>
+        )}
+      </div>
+
+      {/* Search and Filter Bar */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <input
+          type="text"
+          placeholder="Search by title or asset..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            flex: 2,
+            padding: '8px 12px',
+            backgroundColor: '#313244',
+            border: '1px solid #45475a',
+            borderRadius: '8px',
+            color: '#cdd6f4',
+            fontSize: '14px',
+            minWidth: '200px',
+          }}
+        />
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          style={{
+            flex: 1,
+            padding: '8px 12px',
+            backgroundColor: '#313244',
+            border: '1px solid #45475a',
+            borderRadius: '8px',
+            color: '#cdd6f4',
+            fontSize: '14px',
+            minWidth: '150px',
+          }}
+        >
+          <option value="">All Statuses</option>
+          <option value="open">Open</option>
+          <option value="in_progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
+        </select>
+        <select
+          value={filterPriority}
+          onChange={(e) => setFilterPriority(e.target.value)}
+          style={{
+            flex: 1,
+            padding: '8px 12px',
+            backgroundColor: '#313244',
+            border: '1px solid #45475a',
+            borderRadius: '8px',
+            color: '#cdd6f4',
+            fontSize: '14px',
+            minWidth: '150px',
+          }}
+        >
+          <option value="">All Priorities</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="critical">Critical</option>
+        </select>
+        {(search || filterStatus || filterPriority) && (
+          <button
+            onClick={() => { setSearch(''); setFilterStatus(''); setFilterPriority(''); }}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: 'transparent',
+              border: '1px solid #45475a',
+              borderRadius: '8px',
+              color: '#a6adc8',
+              fontSize: '14px',
+              cursor: 'pointer',
+            }}
+          >
+            Clear
           </button>
         )}
       </div>
@@ -187,14 +277,14 @@ const Tickets = () => {
             </tr>
           </thead>
           <tbody>
-            {tickets.length === 0 ? (
+            {filteredTickets.length === 0 ? (
               <tr>
                 <td colSpan={8} style={{ padding: '2rem', textAlign: 'center', color: '#a6adc8', fontSize: '14px' }}>
-                  No tickets yet. Create your first ticket above.
+                  {tickets.length === 0 ? 'No tickets yet. Create your first ticket above.' : 'No tickets match your search.'}
                 </td>
               </tr>
             ) : (
-              tickets.map((ticket, i) => (
+              filteredTickets.map((ticket, i) => (
                 <tr key={ticket.id} style={{ borderTop: '1px solid #45475a', backgroundColor: i % 2 === 0 ? 'transparent' : '#2a2a3a' }}>
                   <td style={{ padding: '12px 16px', color: '#cdd6f4', fontSize: '14px' }}>{ticket.title}</td>
                   <td style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '14px' }}>{ticket.asset_name || '—'}</td>

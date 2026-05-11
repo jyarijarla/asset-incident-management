@@ -15,6 +15,9 @@ const Assets = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterType, setFilterType] = useState('');
   const [form, setForm] = useState({
     name: '',
     asset_type_id: '',
@@ -77,14 +80,27 @@ const Assets = () => {
     }
   };
 
+  const uniqueTypes = [...new Set(assets.map(a => a.asset_type).filter(Boolean))];
+
+  const filteredAssets = assets.filter(asset => {
+    const matchesSearch = search === '' ||
+      asset.name.toLowerCase().includes(search.toLowerCase()) ||
+      asset.serial_number.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = filterStatus === '' || asset.status === filterStatus;
+    const matchesType = filterType === '' || asset.asset_type === filterType;
+    return matchesSearch && matchesStatus && matchesType;
+  });
+
   if (loading) return <div style={{ padding: '2rem', color: '#cdd6f4' }}>Loading...</div>;
 
   return (
     <div style={{ padding: '2rem', backgroundColor: '#1e1e2e', minHeight: '100vh' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ color: '#cdd6f4', fontSize: '22px', margin: '0 0 4px' }}>Assets</h1>
-          <p style={{ color: '#a6adc8', fontSize: '14px', margin: 0 }}>{assets.length} total assets</p>
+          <p style={{ color: '#a6adc8', fontSize: '14px', margin: 0 }}>
+            {filteredAssets.length} of {assets.length} assets
+          </p>
         </div>
         {user.role === 'admin' && (
           <button
@@ -101,6 +117,80 @@ const Assets = () => {
             }}
           >
             {showForm ? 'Cancel' : '+ New Asset'}
+          </button>
+        )}
+      </div>
+
+      {/* Search and Filter Bar */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <input
+          type="text"
+          placeholder="Search by name or serial number..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            flex: 2,
+            padding: '8px 12px',
+            backgroundColor: '#313244',
+            border: '1px solid #45475a',
+            borderRadius: '8px',
+            color: '#cdd6f4',
+            fontSize: '14px',
+            minWidth: '200px',
+          }}
+        />
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          style={{
+            flex: 1,
+            padding: '8px 12px',
+            backgroundColor: '#313244',
+            border: '1px solid #45475a',
+            borderRadius: '8px',
+            color: '#cdd6f4',
+            fontSize: '14px',
+            minWidth: '150px',
+          }}
+        >
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="under_maintenance">Under Maintenance</option>
+        </select>
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+          style={{
+            flex: 1,
+            padding: '8px 12px',
+            backgroundColor: '#313244',
+            border: '1px solid #45475a',
+            borderRadius: '8px',
+            color: '#cdd6f4',
+            fontSize: '14px',
+            minWidth: '150px',
+          }}
+        >
+          <option value="">All Types</option>
+          {uniqueTypes.map(type => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
+        {(search || filterStatus || filterType) && (
+          <button
+            onClick={() => { setSearch(''); setFilterStatus(''); setFilterType(''); }}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: 'transparent',
+              border: '1px solid #45475a',
+              borderRadius: '8px',
+              color: '#a6adc8',
+              fontSize: '14px',
+              cursor: 'pointer',
+            }}
+          >
+            Clear
           </button>
         )}
       </div>
@@ -174,14 +264,14 @@ const Assets = () => {
             </tr>
           </thead>
           <tbody>
-            {assets.length === 0 ? (
+            {filteredAssets.length === 0 ? (
               <tr>
                 <td colSpan={7} style={{ padding: '2rem', textAlign: 'center', color: '#a6adc8', fontSize: '14px' }}>
-                  No assets yet. Create your first asset above.
+                  {assets.length === 0 ? 'No assets yet. Create your first asset above.' : 'No assets match your search.'}
                 </td>
               </tr>
             ) : (
-              assets.map((asset, i) => (
+              filteredAssets.map((asset, i) => (
                 <tr key={asset.id} style={{ borderTop: '1px solid #45475a', backgroundColor: i % 2 === 0 ? 'transparent' : '#2a2a3a' }}>
                   <td style={{ padding: '12px 16px', color: '#cdd6f4', fontSize: '14px' }}>{asset.name}</td>
                   <td style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '14px' }}>{asset.asset_type || '—'}</td>
