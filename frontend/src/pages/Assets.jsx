@@ -42,7 +42,7 @@ const Assets = () => {
 
   const fetchAssetTypes = async () => {
     try {
-      const res = await api.get('/asset-types');
+      const res = await api.get('/assets/types');
       setAssetTypes(res.data);
     } catch (err) {
       setAssetTypes([
