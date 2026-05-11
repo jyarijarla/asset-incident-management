@@ -144,4 +144,51 @@ const deleteTicket = async (req, res) => {
   }
 };
 
+const getTicketStats = async (req, res) => {
+  try {
+    const ticketTrends = await pool.query(`
+      SELECT 
+        DATE(created_at) as date,
+        COUNT(*) as total,
+        COUNT(*) FILTER (WHERE status = 'resolved' OR status = 'closed') as resolved
+      FROM tickets
+      WHERE created_at >= NOW() - INTERVAL '7 days'
+      GROUP BY DATE(created_at)
+      ORDER BY date ASC
+    `);
+
+    const priorityDist = await pool.query(`
+      SELECT priority, COUNT(*) as count
+      FROM tickets
+      GROUP BY priority
+    `);
+
+    const avgResolution = await pool.query(`
+      SELECT 
+        ROUND(AVG(EXTRACT(EPOCH FROM (resolved_at - created_at))/3600)::numeric, 1) as avg_hours
+      FROM tickets
+      WHERE resolved_at IS NOT NULL
+    `);
+
+    const assetsByType = await pool.query(`
+      SELECT asset_types.name as type, COUNT(*) as count
+      FROM assets
+      LEFT JOIN asset_types ON assets.asset_type_id = asset_types.id
+      GROUP BY asset_types.name
+    `);
+
+    res.json({
+      trends: ticketTrends.rows,
+      priorityDistribution: priorityDist.rows,
+      avgResolutionHours: avgResolution.rows[0]?.avg_hours || 0,
+      assetsByType: assetsByType.rows,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+module.exports = { getAllTickets, getTicketById, createTicket, updateTicket, deleteTicket, getTicketStats };
+
 module.exports = { getAllTickets, getTicketById, createTicket, updateTicket, deleteTicket };
