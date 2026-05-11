@@ -2,8 +2,7 @@
 
 A full stack IT operations platform with AI-powered ticket triage, role-based access control, and automated workflow monitoring. Built to simulate enterprise-grade asset and incident management used by real IT departments.
 
-**[Live Demo](https://asset-incident-management.vercel.app)** · **[API](https://asset-incident-management-jyarijarla.onrender.com)** · **[GitHub](https://github.com/jyarijarla/asset-incident-management)**
-
+**[Live Demo](https://asset-incident-management.vercel.app)** ·
 ---
 
 ## Overview
