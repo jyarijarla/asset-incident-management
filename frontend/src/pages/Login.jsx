@@ -37,10 +37,14 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const [mode, setMode] = useState('login'); // 'login' | 'forgot'
+  // forgot flow: 'email' → verify account exists → 'reset' → set new password → 'done'
+  const [mode, setMode] = useState('login');
+  const [forgotStep, setForgotStep] = useState('email'); // 'email' | 'reset' | 'done'
   const [resetEmail, setResetEmail] = useState('');
+  const [resetName, setResetName] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
-  const [resetSent, setResetSent] = useState(false);
   const [resetError, setResetError] = useState('');
 
   const { login } = useAuth();
@@ -61,13 +65,15 @@ const Login = () => {
     }
   };
 
-  const handleForgotPassword = async (e) => {
+  // Step 1: verify the email exists
+  const handleVerifyEmail = async (e) => {
     e.preventDefault();
     setResetLoading(true);
     setResetError('');
     try {
-      await api.post('/auth/forgot-password', { email: resetEmail });
-      setResetSent(true);
+      const res = await api.post('/auth/forgot-password', { email: resetEmail });
+      setResetName(res.data.name);
+      setForgotStep('reset');
     } catch (err) {
       setResetError(err.response?.data?.error || 'Something went wrong');
     } finally {
@@ -75,18 +81,40 @@ const Login = () => {
     }
   };
 
+  // Step 2: set the new password
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) return setResetError('Passwords do not match');
+    if (newPassword.length < 6) return setResetError('Password must be at least 6 characters');
+    setResetLoading(true);
+    setResetError('');
+    try {
+      await api.post('/auth/reset-password', { email: resetEmail, newPassword });
+      setForgotStep('done');
+    } catch (err) {
+      setResetError(err.response?.data?.error || 'Failed to reset password');
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   const switchToForgot = () => {
     setMode('forgot');
+    setForgotStep('email');
     setResetEmail(email);
+    setResetName('');
+    setNewPassword('');
+    setConfirmPassword('');
     setError('');
-    setResetSent(false);
     setResetError('');
   };
 
   const switchToLogin = () => {
     setMode('login');
-    setResetSent(false);
+    setForgotStep('email');
     setResetError('');
+    setNewPassword('');
+    setConfirmPassword('');
   };
 
   return (
@@ -188,7 +216,7 @@ const Login = () => {
               </div>
             </>
           ) : (
-            /* ── Forgot password ── */
+            /* ── Forgot password (3 steps) ── */
             <>
               <div className="mb-8">
                 <button type="button" onClick={switchToLogin}
@@ -198,54 +226,103 @@ const Login = () => {
                   </svg>
                   Back to sign in
                 </button>
-                <h1 className="text-2xl font-bold tracking-tight text-[#f4f4f5]">Reset your password</h1>
-                <p className="mt-1.5 text-sm text-[#71717a]">Enter your email and we'll send a reset link.</p>
+                <h1 className="text-2xl font-bold tracking-tight text-[#f4f4f5]">
+                  {forgotStep === 'email' ? 'Find your account' :
+                   forgotStep === 'reset' ? 'Set a new password' :
+                   'Password updated'}
+                </h1>
+                <p className="mt-1.5 text-sm text-[#71717a]">
+                  {forgotStep === 'email' && 'Enter your email to verify your account.'}
+                  {forgotStep === 'reset' && `Verified as ${resetName}. Choose a new password.`}
+                </p>
               </div>
 
               <div className="card-glass rounded-2xl p-7">
-                {resetSent ? (
-                  <div className="animate-fade-in space-y-5 text-center py-2">
+                {/* Step indicator */}
+                {forgotStep !== 'done' && (
+                  <div className="mb-6 flex items-center gap-2">
+                    {['email', 'reset'].map((s, i) => (
+                      <div key={s} className="flex items-center gap-2">
+                        <div className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold transition-colors ${
+                          forgotStep === s ? 'bg-[#3b82f6] text-white' :
+                          (i === 0 && forgotStep === 'reset') ? 'bg-[#22c55e]/20 text-[#22c55e] border border-[#22c55e]/30' :
+                          'bg-[#27272a] text-[#52525b]'
+                        }`}>
+                          {i === 0 && forgotStep === 'reset' ? '✓' : i + 1}
+                        </div>
+                        <span className={`text-xs ${forgotStep === s ? 'text-[#a1a1aa]' : 'text-[#3f3f46]'}`}>
+                          {s === 'email' ? 'Verify' : 'Reset'}
+                        </span>
+                        {i === 0 && <div className="h-px w-6 bg-[#27272a]" />}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {resetError && (
+                  <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/8 px-4 py-3 text-sm text-[#ef4444]">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    {resetError}
+                  </div>
+                )}
+
+                {forgotStep === 'email' && (
+                  <form onSubmit={handleVerifyEmail} className="space-y-4">
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-[#a1a1aa]">Email address</label>
+                      <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)}
+                        className={inputCls} placeholder="you@company.com" required autoComplete="email" />
+                    </div>
+                    <button type="submit" disabled={resetLoading}
+                      className="btn-primary w-full rounded-xl py-3 text-sm font-semibold text-white disabled:pointer-events-none">
+                      {resetLoading ? <span className="flex items-center justify-center gap-2"><Spinner /> Checking…</span> : 'Find account'}
+                    </button>
+                  </form>
+                )}
+
+                {forgotStep === 'reset' && (
+                  <form onSubmit={handleResetPassword} className="space-y-4">
+                    <div className="flex items-center gap-2.5 rounded-xl border border-[#27272a] bg-[#0a0a0f] px-4 py-3">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      <span className="text-sm text-[#71717a]">{resetEmail}</span>
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-[#a1a1aa]">New password</label>
+                      <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
+                        className={inputCls} placeholder="••••••••" required autoComplete="new-password" />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-[#a1a1aa]">Confirm password</label>
+                      <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
+                        className={inputCls} placeholder="••••••••" required autoComplete="new-password" />
+                    </div>
+                    <button type="submit" disabled={resetLoading}
+                      className="btn-primary w-full rounded-xl py-3 text-sm font-semibold text-white disabled:pointer-events-none">
+                      {resetLoading ? <span className="flex items-center justify-center gap-2"><Spinner /> Updating…</span> : 'Reset password'}
+                    </button>
+                  </form>
+                )}
+
+                {forgotStep === 'done' && (
+                  <div className="animate-fade-in space-y-5 py-2 text-center">
                     <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#22c55e]/10 border border-[#22c55e]/20 text-[#22c55e]">
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     </div>
                     <div>
-                      <p className="font-semibold text-[#f4f4f5]">Check your inbox</p>
-                      <p className="mt-2 text-sm text-[#71717a]">
-                        If <span className="text-[#a1a1aa] font-medium">{resetEmail}</span> has an account, a reset link was sent.
-                      </p>
+                      <p className="font-semibold text-[#f4f4f5]">Password updated</p>
+                      <p className="mt-2 text-sm text-[#71717a]">You can now sign in with your new password.</p>
                     </div>
-                    <p className="text-[11px] text-[#3f3f46]">
-                      No email service configured? Check the server console for the reset link.
-                    </p>
                     <button type="button" onClick={switchToLogin}
                       className="btn-primary w-full rounded-xl py-3 text-sm font-semibold text-white">
-                      Back to sign in
+                      Sign in now
                     </button>
                   </div>
-                ) : (
-                  <>
-                    {resetError && (
-                      <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/8 px-4 py-3 text-sm text-[#ef4444]">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-                          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                        </svg>
-                        {resetError}
-                      </div>
-                    )}
-                    <form onSubmit={handleForgotPassword} className="space-y-4">
-                      <div>
-                        <label className="mb-1.5 block text-xs font-medium text-[#a1a1aa]">Email address</label>
-                        <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)}
-                          className={inputCls} placeholder="you@company.com" required autoComplete="email" />
-                      </div>
-                      <button type="submit" disabled={resetLoading}
-                        className="btn-primary w-full rounded-xl py-3 text-sm font-semibold text-white disabled:pointer-events-none">
-                        {resetLoading ? <span className="flex items-center justify-center gap-2"><Spinner /> Sending…</span> : 'Send reset link'}
-                      </button>
-                    </form>
-                  </>
                 )}
               </div>
             </>
