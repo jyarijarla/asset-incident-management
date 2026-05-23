@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
@@ -14,8 +14,8 @@ const INDUSTRIES = [
   { value: 'other', label: 'Other' },
 ];
 
-const inputCls = 'w-full rounded-xl border border-[#3f3f46] bg-[#0f0f13] px-4 py-2.5 text-sm text-[#fafafa] placeholder:text-[#52525b] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
-const labelCls = 'mb-1.5 block text-xs font-medium text-[#a1a1aa]';
+const inputCls = 'w-full rounded-xl border border-[#e7e5e4] bg-white px-4 py-2.5 text-sm text-[#1c1917] placeholder:text-[#a8a29e] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
+const labelCls = 'mb-1.5 block text-xs font-medium text-[#57534e]';
 
 const Register = () => {
   const [form, setForm] = useState({ org_name: '', industry: 'technology', name: '', email: '', password: '' });
@@ -52,17 +52,17 @@ const Register = () => {
               <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-[#fafafa]">Create your organization</h1>
-          <p className="mt-1 text-sm text-[#71717a]">Set up your workspace in under a minute</p>
+          <h1 className="text-xl font-bold text-[#1c1917]">Create your organization</h1>
+          <p className="mt-1 text-sm text-[#78716c]">Set up your workspace in under a minute</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="rounded-2xl border border-[#3f3f46]/60 bg-[#18181b] p-7">
+        <form onSubmit={handleSubmit} className="rounded-2xl border border-[#e7e5e4] bg-white p-7">
           {error && (
             <div className="mb-5 rounded-xl border border-[#ef4444]/30 bg-[#ef4444]/10 px-4 py-2.5 text-sm text-[#ef4444]">{error}</div>
           )}
 
           <div className="mb-5 space-y-4">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#52525b]">Organization</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#a8a29e]">Organization</p>
             <div>
               <label className={labelCls}>Organization name</label>
               <input className={inputCls} type="text" required placeholder="Acme Corp / The Midnight Band / …"
@@ -73,14 +73,14 @@ const Register = () => {
               <select className={`${inputCls} cursor-pointer`} value={form.industry} onChange={set('industry')}>
                 {INDUSTRIES.map(i => <option key={i.value} value={i.value}>{i.label}</option>)}
               </select>
-              <p className="mt-1.5 text-[11px] text-[#52525b]">Assets and AI triage will be tailored to your industry.</p>
+              <p className="mt-1.5 text-[11px] text-[#a8a29e]">Assets and AI triage will be tailored to your industry.</p>
             </div>
           </div>
 
-          <div className="my-5 border-t border-[#3f3f46]/60" />
+          <div className="my-5 border-t border-[#e7e5e4]" />
 
           <div className="space-y-4">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#52525b]">Admin account</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#a8a29e]">Admin account</p>
             <div>
               <label className={labelCls}>Your name</label>
               <input className={inputCls} type="text" required placeholder="Jane Smith"
@@ -104,12 +104,12 @@ const Register = () => {
           </button>
         </form>
 
-        <p className="mt-5 text-center text-sm text-[#71717a]">
+        <p className="mt-5 text-center text-sm text-[#78716c]">
           Already have an account?{' '}
           <Link to="/login" className="font-medium text-[#3b82f6] hover:underline">Sign in</Link>
         </p>
-        <p className="mt-2 text-center text-sm text-[#71717a]">
-          <Link to="/" className="hover:text-[#a1a1aa] transition-colors">← Back to home</Link>
+        <p className="mt-2 text-center text-sm text-[#78716c]">
+          <Link to="/" className="hover:text-[#57534e] transition-colors">← Back to home</Link>
         </p>
       </div>
     </div>

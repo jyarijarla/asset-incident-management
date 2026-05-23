@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import PageLoader from '../components/PageLoader';
 
 const STATUS_CLASSES = {
   active: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
-  inactive: 'text-[#a1a1aa] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  inactive: 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
   under_maintenance: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
 };
 
-const inputCls = 'w-full rounded-xl border border-[#3f3f46] bg-[#0f0f13] px-3.5 py-2.5 text-sm text-[#fafafa] placeholder:text-[#52525b] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
-const labelCls = 'mb-1.5 block text-xs font-medium text-[#a1a1aa]';
+const inputCls = 'w-full rounded-xl border border-[#e7e5e4] bg-white px-3.5 py-2.5 text-sm text-[#1c1917] placeholder:text-[#a8a29e] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
+const labelCls = 'mb-1.5 block text-xs font-medium text-[#57534e]';
 
 const SearchIcon = () => (
-  <svg className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#52525b]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#a8a29e]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
   </svg>
 );
@@ -85,8 +85,8 @@ const Assets = () => {
         {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#fafafa]">Assets</h1>
-            <p className="mt-0.5 text-sm text-[#71717a]">{filtered.length} of {assets.length} assets</p>
+            <h1 className="text-2xl font-bold text-[#1c1917]">Assets</h1>
+            <p className="mt-0.5 text-sm text-[#78716c]">{filtered.length} of {assets.length} assets</p>
           </div>
           {user.role === 'admin' && (
             <button onClick={() => setShowForm(v => !v)}
@@ -117,7 +117,7 @@ const Assets = () => {
           </select>
           {hasFilters && (
             <button onClick={() => { setSearch(''); setFilterStatus(''); setFilterType(''); setCurrentPage(1); }}
-              className="rounded-xl border border-[#3f3f46] bg-transparent px-4 py-2.5 text-sm text-[#a1a1aa] transition hover:bg-[#3f3f46]/30 hover:text-[#fafafa]">
+              className="rounded-xl border border-[#e7e5e4] bg-transparent px-4 py-2.5 text-sm text-[#57534e] transition hover:bg-[#f5f5f4] hover:text-[#1c1917]">
               Clear
             </button>
           )}
@@ -125,8 +125,8 @@ const Assets = () => {
 
         {/* Create Form */}
         {showForm && (
-          <div className="rounded-2xl border border-[#3f3f46]/60 bg-[#18181b] p-6">
-            <h2 className="mb-4 text-sm font-semibold text-[#fafafa]">New Asset</h2>
+          <div className="rounded-2xl border border-[#e7e5e4] bg-white p-6">
+            <h2 className="mb-4 text-sm font-semibold text-[#1c1917]">New Asset</h2>
             {error && (
               <div className="mb-4 rounded-xl border border-[#ef4444]/30 bg-[#ef4444]/10 px-4 py-2.5 text-sm text-[#ef4444]">{error}</div>
             )}
@@ -167,35 +167,35 @@ const Assets = () => {
         )}
 
         {/* Table */}
-        <div className="overflow-hidden rounded-2xl border border-[#3f3f46]/60 bg-[#18181b]">
+        <div className="overflow-hidden rounded-2xl border border-[#e7e5e4] bg-white">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
               <thead>
-                <tr className="border-b border-[#3f3f46]/60">
+                <tr className="border-b border-[#e7e5e4]">
                   {['Name', 'Type', 'Serial Number', 'Status', 'Location', 'Assigned To', 'Actions'].map(h => (
-                    <th key={h} className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#71717a]">{h}</th>
+                    <th key={h} className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#3f3f46]/40">
+              <tbody className="divide-y divide-[#f5f5f4]">
                 {paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-5 py-12 text-center text-sm text-[#3f3f46]">
+                    <td colSpan={7} className="px-5 py-12 text-center text-sm text-[#a8a29e]">
                       {assets.length === 0 ? 'No assets yet — create your first one above.' : 'No assets match your filters.'}
                     </td>
                   </tr>
                 ) : paginated.map(asset => (
                   <tr key={asset.id} className="transition-colors hover:bg-white/[0.03]">
-                    <td className="px-5 py-3.5 font-medium text-[#fafafa]">{asset.name}</td>
-                    <td className="px-5 py-3.5 text-[#a1a1aa]">{asset.asset_type || '—'}</td>
-                    <td className="px-5 py-3.5 font-mono text-xs text-[#a1a1aa]">{asset.serial_number}</td>
+                    <td className="px-5 py-3.5 font-medium text-[#1c1917]">{asset.name}</td>
+                    <td className="px-5 py-3.5 text-[#57534e]">{asset.asset_type || '—'}</td>
+                    <td className="px-5 py-3.5 font-mono text-xs text-[#57534e]">{asset.serial_number}</td>
                     <td className="px-5 py-3.5">
-                      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${STATUS_CLASSES[asset.status] || 'text-[#a1a1aa] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
+                      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${STATUS_CLASSES[asset.status] || 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
                         {asset.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-[#a1a1aa]">{asset.location || '—'}</td>
-                    <td className="px-5 py-3.5 text-[#a1a1aa]">{asset.assigned_to || '—'}</td>
+                    <td className="px-5 py-3.5 text-[#57534e]">{asset.location || '—'}</td>
+                    <td className="px-5 py-3.5 text-[#57534e]">{asset.assigned_to || '—'}</td>
                     <td className="px-5 py-3.5">
                       {user.role === 'admin' && (
                         <button onClick={() => handleDelete(asset.id)}
@@ -211,11 +211,11 @@ const Assets = () => {
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-[#3f3f46]/60 px-5 py-3.5">
-              <span className="text-xs text-[#71717a]">Page {currentPage} of {totalPages} · {filtered.length} results</span>
+            <div className="flex items-center justify-between border-t border-[#e7e5e4] px-5 py-3.5">
+              <span className="text-xs text-[#78716c]">Page {currentPage} of {totalPages} · {filtered.length} results</span>
               <div className="flex gap-2">
                 <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
-                  className="rounded-lg border border-[#3f3f46] bg-transparent px-3 py-1.5 text-xs font-medium text-[#a1a1aa] transition enabled:hover:bg-[#3f3f46]/50 disabled:opacity-40">
+                  className="rounded-lg border border-[#e7e5e4] bg-transparent px-3 py-1.5 text-xs font-medium text-[#57534e] transition enabled:hover:bg-[#e7e5e4] disabled:opacity-40">
                   Previous
                 </button>
                 <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}

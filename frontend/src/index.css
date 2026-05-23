@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0a0a0f;
-  --card: #111116;
-  --card-surface: #18181b;
-  --border: #27272a;
-  --border-muted: #1e1e22;
-  --text: #f4f4f5;
-  --text-muted: #a1a1aa;
-  --text-dim: #52525b;
+  --bg: #fafaf9;
+  --card: #ffffff;
+  --card-surface: #f5f5f4;
+  --border: #e7e5e4;
+  --border-muted: #f5f5f4;
+  --text: #1c1917;
+  --text-muted: #57534e;
+  --text-dim: #a8a29e;
   --blue: #3b82f6;
-  --blue-bright: #60a5fa;
+  --blue-bright: #2563eb;
   --green: #22c55e;
   --amber: #f59e0b;
   --red: #ef4444;
@@ -19,7 +19,7 @@
 
 @layer base {
   * {
-    border-color: rgb(39 39 42 / 0.8);
+    border-color: rgb(231 229 228 / 0.8);
     box-sizing: border-box;
   }
 
@@ -36,14 +36,12 @@
     -moz-osx-font-smoothing: grayscale;
     color: var(--text);
 
-    /* Layered background: gradient blooms + dot grid + base */
     background-color: var(--bg);
     background-image:
-      radial-gradient(ellipse 80% 60% at 10% -5%, rgb(59 130 246 / 0.11), transparent),
-      radial-gradient(ellipse 60% 50% at 90% 5%, rgb(99 102 241 / 0.07), transparent),
-      radial-gradient(ellipse 40% 40% at 50% 100%, rgb(59 130 246 / 0.05), transparent),
-      radial-gradient(circle, rgb(255 255 255 / 0.018) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
+      radial-gradient(ellipse 80% 60% at 10% -5%, rgb(59 130 246 / 0.06), transparent),
+      radial-gradient(ellipse 60% 50% at 90% 5%, rgb(99 102 241 / 0.04), transparent),
+      radial-gradient(circle, rgb(0 0 0 / 0.028) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 28px 28px;
     background-attachment: fixed, fixed, fixed, fixed;
   }
 
@@ -55,20 +53,18 @@
   }
 
   ::selection {
-    background: rgb(59 130 246 / 0.3);
+    background: rgb(59 130 246 / 0.18);
     color: var(--text);
   }
 
-  /* Focus ring reset — we handle focus-visible in Tailwind */
   :focus {
     outline: none;
   }
   :focus-visible {
-    outline: 2px solid rgb(59 130 246 / 0.6);
+    outline: 2px solid rgb(59 130 246 / 0.5);
     outline-offset: 2px;
   }
 
-  /* Scrollbar */
   ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -77,29 +73,28 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #27272a;
+    background: #d6d3d1;
     border-radius: 999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #3f3f46;
+    background: #a8a29e;
   }
 }
 
 @layer utilities {
-  /* Subtle gradient on primary buttons — apply via class */
   .btn-primary {
     background-image: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    box-shadow: 0 1px 8px rgb(59 130 246 / 0.35), inset 0 1px 0 rgb(255 255 255 / 0.12);
+    box-shadow: 0 1px 8px rgb(59 130 246 / 0.3), inset 0 1px 0 rgb(255 255 255 / 0.15);
     transition: all 0.15s ease-out;
   }
   .btn-primary:hover {
     background-image: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-    box-shadow: 0 2px 16px rgb(59 130 246 / 0.45), inset 0 1px 0 rgb(255 255 255 / 0.15);
+    box-shadow: 0 2px 16px rgb(59 130 246 / 0.4), inset 0 1px 0 rgb(255 255 255 / 0.2);
     transform: translateY(-1px);
   }
   .btn-primary:active {
     transform: scale(0.97);
-    box-shadow: 0 1px 4px rgb(59 130 246 / 0.25);
+    box-shadow: 0 1px 4px rgb(59 130 246 / 0.2);
   }
   .btn-primary:disabled {
     opacity: 0.5;
@@ -107,18 +102,16 @@
     box-shadow: none;
   }
 
-  /* Glass card surface */
   .card-glass {
-    background: rgb(17 17 22 / 0.85);
+    background: rgb(255 255 255 / 0.92);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgb(255 255 255 / 0.06);
-    box-shadow: 0 8px 32px rgb(0 0 0 / 0.4), inset 0 1px 0 rgb(255 255 255 / 0.05);
+    border: 1px solid rgb(0 0 0 / 0.07);
+    box-shadow: 0 4px 24px rgb(0 0 0 / 0.06), 0 1px 0 rgb(255 255 255 / 0.9);
   }
 
-  /* Subtle brand icon glow */
   .icon-glow {
-    box-shadow: 0 0 0 1px rgb(59 130 246 / 0.2), 0 0 20px rgb(59 130 246 / 0.15);
+    box-shadow: 0 0 0 1px rgb(59 130 246 / 0.2), 0 0 16px rgb(59 130 246 / 0.12);
   }
 }
 
@@ -136,11 +129,6 @@
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
-}
-
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position:  200% center; }
 }
 
 .animate-fade-up {

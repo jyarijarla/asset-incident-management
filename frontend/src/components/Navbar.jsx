@@ -1,4 +1,4 @@
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+﻿import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const INDUSTRY_LABELS = {
@@ -29,7 +29,7 @@ const Navbar = () => {
       className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
         isActive(to)
           ? 'bg-[#3b82f6]/12 text-[#3b82f6]'
-          : 'text-[#a1a1aa] hover:bg-white/5 hover:text-[#fafafa]'
+          : 'text-[#57534e] hover:bg-[#f5f5f4] hover:text-[#1c1917]'
       }`}
     >
       {label}
@@ -37,7 +37,7 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[#3f3f46]/60 bg-[#0f0f13]/90 backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 border-b border-[#e7e5e4] bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex h-14 w-full max-w-350 items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* Left: brand + links */}
@@ -50,7 +50,7 @@ const Navbar = () => {
               </svg>
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="text-sm font-semibold text-[#fafafa]">{org?.name || 'AssetFlow'}</span>
+              <span className="text-sm font-semibold text-[#1c1917]">{org?.name || 'AssetFlow'}</span>
               {org?.industry && (
                 <span className="text-[10px] font-medium text-[#3b82f6]/70">{INDUSTRY_LABELS[org.industry] || org.industry}</span>
               )}
@@ -67,12 +67,12 @@ const Navbar = () => {
 
         {/* Right: user chip + logout */}
         <div className="flex items-center gap-2.5">
-          <div className="hidden rounded-full border border-[#3f3f46]/80 bg-[#18181b] px-3 py-1.5 sm:flex items-center gap-2">
+          <div className="hidden rounded-full border border-[#e7e5e4] bg-white px-3 py-1.5 sm:flex items-center gap-2">
             <div className="h-5 w-5 rounded-full bg-[#3b82f6]/15 flex items-center justify-center text-[9px] font-bold text-[#3b82f6]">
               {user.name?.charAt(0).toUpperCase()}
             </div>
-            <span className="text-xs text-[#a1a1aa]">
-              {user.name} <span className="text-[#52525b]">· {user.role}</span>
+            <span className="text-xs text-[#57534e]">
+              {user.name} <span className="text-[#a8a29e]">· {user.role}</span>
             </span>
           </div>
           <button
