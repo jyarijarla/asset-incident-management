@@ -6,11 +6,11 @@ import PageLoader from '../components/PageLoader';
 const ROLE_CLS = {
   admin: 'text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/25',
   technician: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
-  viewer: 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  viewer: 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
 };
 
-const inputCls = 'w-full rounded-xl border border-[#e7e5e4] bg-white px-3.5 py-2.5 text-sm text-[#1c1917] placeholder:text-[#a8a29e] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
-const labelCls = 'mb-1.5 block text-xs font-medium text-[#57534e]';
+const inputCls = 'w-full rounded-xl border border-[#cac5bf] bg-white px-3.5 py-2.5 text-sm text-[#1c1917] placeholder:text-[#78716c] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
+const labelCls = 'mb-1.5 block text-xs font-medium text-[#44403c]';
 
 const Users = () => {
   const { user } = useAuth();
@@ -61,7 +61,7 @@ const Users = () => {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-[#1c1917]">Team</h1>
-            <p className="mt-0.5 text-sm text-[#78716c]">{users.length} member{users.length !== 1 ? 's' : ''} in your organization</p>
+            <p className="mt-0.5 text-sm text-[#57534e]">{users.length} member{users.length !== 1 ? 's' : ''} in your organization</p>
           </div>
           <button onClick={() => setShowForm(v => !v)}
             className="rounded-xl bg-[#3b82f6] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2563eb] active:scale-95">
@@ -71,7 +71,7 @@ const Users = () => {
 
         {/* Create Form */}
         {showForm && (
-          <div className="rounded-2xl border border-[#e7e5e4] bg-white p-6">
+          <div className="rounded-2xl border border-[#cac5bf] bg-white p-6">
             <h2 className="mb-4 text-sm font-semibold text-[#1c1917]">New Team Member</h2>
             {error && (
               <div className="mb-4 rounded-xl border border-[#ef4444]/30 bg-[#ef4444]/10 px-4 py-2.5 text-sm text-[#ef4444]">{error}</div>
@@ -106,23 +106,23 @@ const Users = () => {
         )}
 
         {/* Table */}
-        <div className="overflow-hidden rounded-2xl border border-[#e7e5e4] bg-white">
+        <div className="overflow-hidden rounded-2xl border border-[#cac5bf] bg-white">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
               <thead>
-                <tr className="border-b border-[#e7e5e4]">
+                <tr className="border-b border-[#cac5bf]">
                   {['Member', 'Email', 'Department', 'Role', 'Joined', 'Change Role', 'Actions'].map(h => (
-                    <th key={h} className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">{h}</th>
+                    <th key={h} className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#57534e]">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f5f5f4]">
+              <tbody className="divide-y divide-[#dedad4]">
                 {users.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-5 py-12 text-center text-sm text-[#a8a29e]">No team members yet.</td>
+                    <td colSpan={7} className="px-5 py-12 text-center text-sm text-[#78716c]">No team members yet.</td>
                   </tr>
                 ) : users.map(u => (
-                  <tr key={u.id} className="transition-colors hover:bg-[#f5f5f4]">
+                  <tr key={u.id} className="transition-colors hover:bg-[#dedad4]">
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#3b82f6]/15 text-xs font-semibold text-[#3b82f6]">
@@ -134,21 +134,21 @@ const Users = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-5 py-3.5 text-[#57534e]">{u.email}</td>
-                    <td className="px-5 py-3.5 text-[#57534e]">{u.department || '—'}</td>
+                    <td className="px-5 py-3.5 text-[#44403c]">{u.email}</td>
+                    <td className="px-5 py-3.5 text-[#44403c]">{u.department || '—'}</td>
                     <td className="px-5 py-3.5">
-                      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${ROLE_CLS[u.role] || 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
+                      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${ROLE_CLS[u.role] || 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
                         {u.role}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-[#57534e]">
+                    <td className="px-5 py-3.5 text-[#44403c]">
                       {new Date(u.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
                     <td className="px-5 py-3.5">
                       {u.id !== user.id && (
                         <select value={u.role === 'admin' ? 1 : u.role === 'technician' ? 2 : 3}
                           onChange={e => handleRoleUpdate(u.id, e.target.value)}
-                          className="rounded-lg border border-[#e7e5e4] bg-white px-2.5 py-1.5 text-xs text-[#1c1917] outline-none transition focus:border-[#3b82f6]/50 cursor-pointer">
+                          className="rounded-lg border border-[#cac5bf] bg-white px-2.5 py-1.5 text-xs text-[#1c1917] outline-none transition focus:border-[#3b82f6]/50 cursor-pointer">
                           <option value={1}>Admin</option>
                           <option value={2}>Technician</option>
                           <option value={3}>Viewer</option>

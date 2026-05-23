@@ -8,7 +8,7 @@ const STATUS_CLS = {
   open: 'text-[#ef4444] bg-[#ef4444]/10 border-[#ef4444]/25',
   in_progress: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
   resolved: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
-  closed: 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  closed: 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
 };
 const PRIORITY_CLS = {
   low: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
@@ -25,7 +25,7 @@ const GRADE_CFG = {
 };
 
 const Pill = ({ label, map }) => (
-  <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${map[label] || 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
+  <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${map[label] || 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
     {label?.replace('_', ' ')}
   </span>
 );
@@ -48,12 +48,12 @@ const AlertIcon = () => (
   </svg>
 );
 
-const inputCls = 'w-full rounded-xl border border-[#e7e5e4] bg-white px-3.5 py-2.5 text-sm text-[#1c1917] placeholder:text-[#a8a29e] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border resize-none';
-const labelCls = 'mb-1.5 block text-xs font-medium text-[#57534e]';
+const inputCls = 'w-full rounded-xl border border-[#cac5bf] bg-white px-3.5 py-2.5 text-sm text-[#1c1917] placeholder:text-[#78716c] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border resize-none';
+const labelCls = 'mb-1.5 block text-xs font-medium text-[#44403c]';
 
 const MetaRow = ({ label, value }) => (
-  <div className="flex items-start gap-3 py-2.5 border-b border-[#e7e5e4] last:border-0">
-    <span className="w-28 shrink-0 text-xs text-[#78716c]">{label}</span>
+  <div className="flex items-start gap-3 py-2.5 border-b border-[#cac5bf] last:border-0">
+    <span className="w-28 shrink-0 text-xs text-[#57534e]">{label}</span>
     <span className="text-sm text-[#1c1917] break-words">{value || '—'}</span>
   </div>
 );
@@ -79,18 +79,18 @@ const GradeCard = ({ ticket }) => {
           </div>
           <div>
             <p className="text-sm font-semibold" style={{ color: cfg.color }}>{cfg.label}</p>
-            <p className="text-xs text-[#78716c]">{cfg.desc}</p>
+            <p className="text-xs text-[#57534e]">{cfg.desc}</p>
           </div>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold" style={{ color: cfg.color }}>{ticket.ai_grade_score}</p>
-          <p className="text-xs text-[#78716c]">/ 100</p>
+          <p className="text-xs text-[#57534e]">/ 100</p>
         </div>
       </div>
 
       {/* Score bar */}
       <div className="px-5 pt-4 pb-1">
-        <div className="h-2 overflow-hidden rounded-full bg-[#e7e5e4]">
+        <div className="h-2 overflow-hidden rounded-full bg-[#cac5bf]">
           <div className="h-full rounded-full transition-all duration-700" style={{ width: `${ticket.ai_grade_score}%`, backgroundColor: cfg.color }} />
         </div>
       </div>
@@ -98,7 +98,7 @@ const GradeCard = ({ ticket }) => {
       {/* Feedback */}
       {ticket.ai_grade_feedback && (
         <div className="px-5 py-3.5">
-          <p className="text-xs font-medium text-[#57534e] mb-1.5">AI Feedback</p>
+          <p className="text-xs font-medium text-[#44403c] mb-1.5">AI Feedback</p>
           <p className="text-sm leading-relaxed text-[#1c1917]">{ticket.ai_grade_feedback}</p>
         </div>
       )}
@@ -110,7 +110,7 @@ const GradeCard = ({ ticket }) => {
             <p className="mb-2 text-xs font-medium text-[#22c55e]">Strengths</p>
             <ul className="space-y-1.5">
               {strengths.map((s, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-[#57534e]">
+                <li key={i} className="flex items-start gap-2 text-xs text-[#44403c]">
                   <span className="mt-0.5 shrink-0 text-[#22c55e]"><CheckIcon /></span>
                   {s}
                 </li>
@@ -123,7 +123,7 @@ const GradeCard = ({ ticket }) => {
             <p className="mb-2 text-xs font-medium text-[#f59e0b]">Areas to Improve</p>
             <ul className="space-y-1.5">
               {improvements.map((imp, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-[#57534e]">
+                <li key={i} className="flex items-start gap-2 text-xs text-[#44403c]">
                   <span className="mt-0.5 shrink-0 text-[#f59e0b]"><AlertIcon /></span>
                   {imp}
                 </li>
@@ -194,7 +194,7 @@ const TicketDetail = () => {
   if (!ticket) return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <p className="text-[#78716c]">Ticket not found.</p>
+        <p className="text-[#57534e]">Ticket not found.</p>
         <Link to="/tickets" className="mt-3 inline-block text-sm text-[#3b82f6] hover:underline">← Back to Tickets</Link>
       </div>
     </div>
@@ -212,7 +212,7 @@ const TicketDetail = () => {
 
         {/* Back + breadcrumb */}
         <div>
-          <Link to="/tickets" className="inline-flex items-center gap-1.5 text-sm text-[#78716c] transition hover:text-[#1c1917]">
+          <Link to="/tickets" className="inline-flex items-center gap-1.5 text-sm text-[#57534e] transition hover:text-[#1c1917]">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
             Back to Tickets
           </Link>
@@ -222,7 +222,7 @@ const TicketDetail = () => {
         <div className="flex flex-wrap items-start gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-2">
-              <span className="text-xs font-mono text-[#a8a29e]">#{ticket.id}</span>
+              <span className="text-xs font-mono text-[#78716c]">#{ticket.id}</span>
               <Pill label={ticket.priority} map={PRIORITY_CLS} />
               <Pill label={ticket.status} map={STATUS_CLS} />
               {ticket.flagged_for_review && (
@@ -245,8 +245,8 @@ const TicketDetail = () => {
 
           {/* Left: ticket details */}
           <div className="lg:col-span-2 space-y-5">
-            <div className="rounded-2xl border border-[#e7e5e4] bg-white p-5">
-              <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-[#a8a29e]">Details</p>
+            <div className="rounded-2xl border border-[#cac5bf] bg-white p-5">
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">Details</p>
               <MetaRow label="Asset" value={ticket.asset_name} />
               <MetaRow label="Reporter" value={ticket.reporter_name} />
               <MetaRow label="Assigned to" value={ticket.assigned_to_name} />
@@ -256,25 +256,25 @@ const TicketDetail = () => {
               )}
             </div>
 
-            <div className="rounded-2xl border border-[#e7e5e4] bg-white p-5">
-              <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-[#a8a29e]">Description</p>
-              <p className="text-sm leading-relaxed text-[#57534e] whitespace-pre-wrap">{ticket.description || '—'}</p>
+            <div className="rounded-2xl border border-[#cac5bf] bg-white p-5">
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">Description</p>
+              <p className="text-sm leading-relaxed text-[#44403c] whitespace-pre-wrap">{ticket.description || '—'}</p>
             </div>
 
             {/* Resolution write-up (read-only if already submitted) */}
             {hasGrade && ticket.resolution_steps && (
-              <div className="rounded-2xl border border-[#e7e5e4] bg-white p-5 space-y-4">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#a8a29e]">Resolution Write-up</p>
+              <div className="rounded-2xl border border-[#cac5bf] bg-white p-5 space-y-4">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">Resolution Write-up</p>
                 <div>
-                  <p className="mb-1 text-xs font-medium text-[#57534e]">Steps Taken</p>
+                  <p className="mb-1 text-xs font-medium text-[#44403c]">Steps Taken</p>
                   <p className="text-sm leading-relaxed text-[#1c1917] whitespace-pre-wrap">{ticket.resolution_steps}</p>
                 </div>
                 <div>
-                  <p className="mb-1 text-xs font-medium text-[#57534e]">Root Cause</p>
+                  <p className="mb-1 text-xs font-medium text-[#44403c]">Root Cause</p>
                   <p className="text-sm leading-relaxed text-[#1c1917] whitespace-pre-wrap">{ticket.root_cause}</p>
                 </div>
                 <div>
-                  <p className="mb-1 text-xs font-medium text-[#57534e]">Solution Applied</p>
+                  <p className="mb-1 text-xs font-medium text-[#44403c]">Solution Applied</p>
                   <p className="text-sm leading-relaxed text-[#1c1917] whitespace-pre-wrap">{ticket.solution_applied}</p>
                 </div>
               </div>
@@ -291,30 +291,30 @@ const TicketDetail = () => {
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#78716c]">Suggested Priority</span>
+                    <span className="text-xs text-[#57534e]">Suggested Priority</span>
                     <Pill label={ticket.ai_priority_suggestion} map={PRIORITY_CLS} />
                   </div>
                   {ticket.ai_category && (
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-[#78716c]">Category</span>
+                      <span className="text-xs text-[#57534e]">Category</span>
                       <span className="text-xs font-medium text-[#1c1917]">{ticket.ai_category}</span>
                     </div>
                   )}
                   {ticket.ai_recommendation && (
                     <div className="pt-1 border-t border-[#a78bfa]/15">
-                      <p className="mb-1 text-xs text-[#78716c]">Recommendation</p>
-                      <p className="text-sm leading-relaxed text-[#57534e]">{ticket.ai_recommendation}</p>
+                      <p className="mb-1 text-xs text-[#57534e]">Recommendation</p>
+                      <p className="text-sm leading-relaxed text-[#44403c]">{ticket.ai_recommendation}</p>
                     </div>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="rounded-2xl border border-[#e7e5e4] bg-white p-5">
+              <div className="rounded-2xl border border-[#cac5bf] bg-white p-5">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="text-[#a78bfa]"><SparkleIcon /></span>
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[#a8a29e]">AI Triage</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">AI Triage</p>
                 </div>
-                <p className="text-xs text-[#a8a29e]">No AI analysis available.</p>
+                <p className="text-xs text-[#78716c]">No AI analysis available.</p>
               </div>
             )}
           </div>
@@ -322,7 +322,7 @@ const TicketDetail = () => {
 
         {/* ── RESOLUTION SECTION ── */}
         <div className="space-y-4">
-          <div className="border-t border-[#e7e5e4] pt-6">
+          <div className="border-t border-[#cac5bf] pt-6">
             <h2 className="text-base font-semibold text-[#1c1917]">Resolution</h2>
           </div>
 
@@ -336,7 +336,7 @@ const TicketDetail = () => {
                 <span className="text-[#ef4444]"><AlertIcon /></span>
                 <div>
                   <p className="text-sm font-semibold text-[#1c1917]">Admin approval required</p>
-                  <p className="text-xs text-[#78716c]">Resolution scored below 60 — an admin must review and approve before this ticket closes.</p>
+                  <p className="text-xs text-[#57534e]">Resolution scored below 60 — an admin must review and approve before this ticket closes.</p>
                 </div>
               </div>
               {isAdmin && (
@@ -352,7 +352,7 @@ const TicketDetail = () => {
           {ticket.flagged_for_review && !ticket.requires_admin_approval && (
             <div className="flex items-center gap-3 rounded-2xl border border-[#f59e0b]/25 bg-[#f59e0b]/8 px-5 py-4">
               <span className="text-[#f59e0b]"><AlertIcon /></span>
-              <p className="text-sm text-[#57534e]">
+              <p className="text-sm text-[#44403c]">
                 This ticket was resolved but <span className="font-medium text-[#f59e0b]">flagged for manager review</span> due to a C-grade resolution.
               </p>
             </div>
@@ -360,10 +360,10 @@ const TicketDetail = () => {
 
           {/* Resolution form */}
           {showForm && (
-            <div className="rounded-2xl border border-[#e7e5e4] bg-white p-6 space-y-5">
+            <div className="rounded-2xl border border-[#cac5bf] bg-white p-6 space-y-5">
               <div>
                 <h3 className="text-sm font-semibold text-[#1c1917]">Submit Resolution Write-up</h3>
-                <p className="mt-0.5 text-xs text-[#78716c]">Claude will grade your resolution and automatically determine the ticket outcome.</p>
+                <p className="mt-0.5 text-xs text-[#57534e]">Claude will grade your resolution and automatically determine the ticket outcome.</p>
               </div>
 
               {error && (
@@ -402,15 +402,15 @@ const TicketDetail = () => {
 
           {/* Already resolved, no grade (manual status change) */}
           {alreadyResolved && !hasGrade && (
-            <div className="rounded-2xl border border-[#e7e5e4] bg-white px-5 py-4">
-              <p className="text-sm text-[#78716c]">This ticket was resolved without a formal resolution write-up.</p>
+            <div className="rounded-2xl border border-[#cac5bf] bg-white px-5 py-4">
+              <p className="text-sm text-[#57534e]">This ticket was resolved without a formal resolution write-up.</p>
             </div>
           )}
 
           {/* Has grade, ticket still in progress — pending admin approval already shown above */}
           {hasGrade && ticket.requires_admin_approval && !isAdmin && (
-            <div className="rounded-2xl border border-[#e7e5e4] bg-white px-5 py-4">
-              <p className="text-sm text-[#78716c]">Waiting for an admin to review and approve this resolution.</p>
+            <div className="rounded-2xl border border-[#cac5bf] bg-white px-5 py-4">
+              <p className="text-sm text-[#57534e]">Waiting for an admin to review and approve this resolution.</p>
             </div>
           )}
         </div>

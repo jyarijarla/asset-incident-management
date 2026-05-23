@@ -21,10 +21,10 @@ const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-[#f7f4f0]">
 
       {/* Top nav */}
-      <header className="flex items-center justify-between border-b border-[#e7e5e4] px-6 py-4">
+      <header className="flex items-center justify-between border-b border-[#cac5bf] px-6 py-4">
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#3b82f6]/15 border border-[#3b82f6]/20">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -35,7 +35,7 @@ const Landing = () => {
           <span className="text-sm font-bold text-[#1c1917]">AssetFlow</span>
         </div>
         <button onClick={() => navigate('/login')}
-          className="rounded-xl border border-[#e7e5e4] bg-transparent px-4 py-1.5 text-sm text-[#57534e] transition hover:bg-[#f5f5f4] hover:text-[#1c1917]">
+          className="rounded-xl border border-[#cac5bf] bg-transparent px-4 py-1.5 text-sm text-[#44403c] transition hover:bg-[#dedad4] hover:text-[#1c1917]">
           Sign in
         </button>
       </header>
@@ -53,7 +53,7 @@ const Landing = () => {
           <span className="text-[#3b82f6]">for Any Team, Any Industry</span>
         </h1>
 
-        <p className="mt-5 max-w-lg text-base leading-relaxed text-[#78716c]">
+        <p className="mt-5 max-w-lg text-base leading-relaxed text-[#57534e]">
           Track your assets, file incident tickets, and get AI-powered triage that understands your industry — not just IT.
         </p>
 
@@ -63,18 +63,18 @@ const Landing = () => {
             Get Started Free
           </button>
           <button onClick={() => navigate('/login')}
-            className="rounded-xl border border-[#e7e5e4] bg-transparent px-6 py-3 text-sm font-medium text-[#57534e] transition hover:bg-[#f5f5f4] hover:text-[#1c1917]">
+            className="rounded-xl border border-[#cac5bf] bg-transparent px-6 py-3 text-sm font-medium text-[#44403c] transition hover:bg-[#dedad4] hover:text-[#1c1917]">
             Sign In
           </button>
         </div>
 
         {/* Industry pills */}
         <div className="mt-16">
-          <p className="mb-4 text-[10px] font-semibold uppercase tracking-widest text-[#a8a29e]">Built for every industry</p>
+          <p className="mb-4 text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">Built for every industry</p>
           <div className="flex flex-wrap justify-center gap-2">
             {INDUSTRIES.map(ind => (
               <div key={ind.label}
-                className="flex items-center gap-2 rounded-full border border-[#e7e5e4] bg-white px-4 py-1.5 text-sm text-[#57534e] transition hover:border-[#d6d3d1] hover:text-[#1c1917]">
+                className="flex items-center gap-2 rounded-full border border-[#cac5bf] bg-white px-4 py-1.5 text-sm text-[#44403c] transition hover:border-[#bab5af] hover:text-[#1c1917]">
                 <span>{ind.icon}</span>
                 <span>{ind.label}</span>
               </div>
@@ -84,14 +84,14 @@ const Landing = () => {
 
         {/* How it works */}
         <div className="mt-20 w-full max-w-3xl">
-          <p className="mb-8 text-[10px] font-semibold uppercase tracking-widest text-[#a8a29e]">How it works</p>
+          <p className="mb-8 text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">How it works</p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map(step => (
               <div key={step.n}
-                className="group rounded-2xl border border-[#e7e5e4] bg-white p-5 text-left transition hover:border-[#d6d3d1] hover:shadow-lg hover:shadow-black/8">
+                className="group rounded-2xl border border-[#cac5bf] bg-white p-5 text-left transition hover:border-[#bab5af] hover:shadow-lg hover:shadow-black/8">
                 <div className="mb-3 text-[11px] font-bold tracking-widest text-[#3b82f6]/40 group-hover:text-[#3b82f6] transition-colors">{step.n}</div>
                 <div className="mb-2 text-sm font-semibold text-[#1c1917]">{step.title}</div>
-                <div className="text-xs leading-relaxed text-[#78716c]">{step.body}</div>
+                <div className="text-xs leading-relaxed text-[#57534e]">{step.body}</div>
               </div>
             ))}
           </div>
@@ -100,7 +100,7 @@ const Landing = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#e7e5e4] py-5 text-center text-xs text-[#a8a29e]">
+      <footer className="border-t border-[#cac5bf] py-5 text-center text-xs text-[#78716c]">
         AssetFlow · Powered by Claude AI
       </footer>
 

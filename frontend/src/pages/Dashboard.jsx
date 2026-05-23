@@ -11,9 +11,9 @@ const PRIORITY_COLORS = { low: '#22c55e', medium: '#3b82f6', high: '#f59e0b', cr
 const PIE_COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#a78bfa'];
 
 const tooltipStyle = {
-  contentStyle: { backgroundColor: '#ffffff', border: '1px solid #e7e5e4', borderRadius: '10px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' },
+  contentStyle: { backgroundColor: '#f7f4f0', border: '1px solid #cac5bf', borderRadius: '10px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' },
   labelStyle: { color: '#1c1917', fontWeight: 600 },
-  itemStyle: { color: '#57534e' },
+  itemStyle: { color: '#44403c' },
 };
 
 /* ── Icons ── */
@@ -53,13 +53,13 @@ const ZapIcon = () => (
 
 /* ── Stat Card ── */
 const StatCard = ({ title, value, subtitle, color, icon }) => (
-  <div className="group relative overflow-hidden rounded-2xl border border-[#e7e5e4] bg-white p-5 transition-all duration-200 hover:border-[#d6d3d1] hover:shadow-lg hover:shadow-black/8">
+  <div className="group relative overflow-hidden rounded-2xl border border-[#cac5bf] bg-white p-5 transition-all duration-200 hover:border-[#bab5af] hover:shadow-lg hover:shadow-black/8">
     <div className="absolute inset-x-0 top-0 h-px" style={{ background: `linear-gradient(90deg, ${color}80, transparent 70%)` }} />
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">{title}</p>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[#57534e]">{title}</p>
         <p className="mt-2.5 text-[2.1rem] font-bold leading-none tracking-tight text-[#1c1917]">{value}</p>
-        {subtitle && <p className="mt-2 text-xs text-[#78716c]">{subtitle}</p>}
+        {subtitle && <p className="mt-2 text-xs text-[#57534e]">{subtitle}</p>}
       </div>
       <div className="shrink-0 rounded-xl p-2.5 transition-transform duration-200 group-hover:scale-105" style={{ color, backgroundColor: `${color}18` }}>
         {icon}
@@ -70,14 +70,14 @@ const StatCard = ({ title, value, subtitle, color, icon }) => (
 
 /* ── Chart Card ── */
 const ChartCard = ({ title, children, className = '' }) => (
-  <div className={`rounded-2xl border border-[#e7e5e4] bg-white p-5 ${className}`}>
+  <div className={`rounded-2xl border border-[#cac5bf] bg-white p-5 ${className}`}>
     <h2 className="mb-4 text-sm font-semibold text-[#1c1917]">{title}</h2>
     {children}
   </div>
 );
 
 const EmptyChart = ({ message }) => (
-  <div className="flex h-[220px] items-center justify-center text-sm text-[#a8a29e]">{message}</div>
+  <div className="flex h-[220px] items-center justify-center text-sm text-[#78716c]">{message}</div>
 );
 
 /* ── Status badge ── */
@@ -86,12 +86,12 @@ const statusCls = {
   open: 'text-[#ef4444] bg-[#ef4444]/10 border-[#ef4444]/25',
   in_progress: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
   resolved: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
-  closed: 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  closed: 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
   under_maintenance: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
-  inactive: 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  inactive: 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
 };
 const Badge = ({ label }) => (
-  <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusCls[label] || 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
+  <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusCls[label] || 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
     {label.replace('_', ' ')}
   </span>
 );
@@ -127,7 +127,7 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-[#1c1917]">
             Welcome back, <span className="text-[#3b82f6]">{user?.name?.split(' ')[0]}</span>
           </h1>
-          <p className="mt-1 text-sm text-[#78716c]">
+          <p className="mt-1 text-sm text-[#57534e]">
             {org?.name && <span className="mr-1.5">{org.name} ·</span>}
             Here's what's happening across your system
           </p>
@@ -202,9 +202,9 @@ const Dashboard = () => {
           <div className="grid gap-4 sm:grid-cols-2 xl:col-span-8">
             <ChartCard title="Recent Assets">
               {assets.length === 0 ? (
-                <p className="py-4 text-center text-sm text-[#a8a29e]">No assets yet</p>
+                <p className="py-4 text-center text-sm text-[#78716c]">No assets yet</p>
               ) : (
-                <div className="divide-y divide-[#f5f5f4]">
+                <div className="divide-y divide-[#dedad4]">
                   {assets.slice(0, 5).map(asset => (
                     <div key={asset.id} className="flex items-center justify-between gap-3 py-2.5">
                       <span className="truncate text-sm text-[#1c1917]">{asset.name}</span>
@@ -217,9 +217,9 @@ const Dashboard = () => {
 
             <ChartCard title="Recent Tickets">
               {tickets.length === 0 ? (
-                <p className="py-4 text-center text-sm text-[#a8a29e]">No tickets yet</p>
+                <p className="py-4 text-center text-sm text-[#78716c]">No tickets yet</p>
               ) : (
-                <div className="divide-y divide-[#f5f5f4]">
+                <div className="divide-y divide-[#dedad4]">
                   {tickets.slice(0, 5).map(ticket => (
                     <div key={ticket.id} className="flex items-center justify-between gap-3 py-2.5">
                       <span className="truncate text-sm text-[#1c1917]">{ticket.title}</span>

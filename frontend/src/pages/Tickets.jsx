@@ -8,7 +8,7 @@ const STATUS_CLS = {
   open: 'text-[#ef4444] bg-[#ef4444]/10 border-[#ef4444]/25',
   in_progress: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
   resolved: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
-  closed: 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  closed: 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
 };
 const PRIORITY_CLS = {
   low: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
@@ -18,16 +18,16 @@ const PRIORITY_CLS = {
 };
 
 const Pill = ({ label, map }) => (
-  <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${map[label] || 'text-[#57534e] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
+  <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${map[label] || 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
     {label.replace('_', ' ')}
   </span>
 );
 
-const inputCls = 'w-full rounded-xl border border-[#e7e5e4] bg-white px-3.5 py-2.5 text-sm text-[#1c1917] placeholder:text-[#a8a29e] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
-const labelCls = 'mb-1.5 block text-xs font-medium text-[#57534e]';
+const inputCls = 'w-full rounded-xl border border-[#cac5bf] bg-white px-3.5 py-2.5 text-sm text-[#1c1917] placeholder:text-[#78716c] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
+const labelCls = 'mb-1.5 block text-xs font-medium text-[#44403c]';
 
 const SearchIcon = () => (
-  <svg className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#a8a29e]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716c]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
   </svg>
 );
@@ -109,7 +109,7 @@ const Tickets = () => {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-[#1c1917]">Tickets</h1>
-            <p className="mt-0.5 text-sm text-[#78716c]">{filtered.length} of {tickets.length} tickets</p>
+            <p className="mt-0.5 text-sm text-[#57534e]">{filtered.length} of {tickets.length} tickets</p>
           </div>
           {['admin', 'technician'].includes(user.role) && (
             <button onClick={() => setShowForm(v => !v)}
@@ -144,7 +144,7 @@ const Tickets = () => {
           </select>
           {hasFilters && (
             <button onClick={() => { setSearch(''); setFilterStatus(''); setFilterPriority(''); setCurrentPage(1); }}
-              className="rounded-xl border border-[#e7e5e4] bg-transparent px-4 py-2.5 text-sm text-[#57534e] transition hover:bg-[#f5f5f4] hover:text-[#1c1917]">
+              className="rounded-xl border border-[#cac5bf] bg-transparent px-4 py-2.5 text-sm text-[#44403c] transition hover:bg-[#dedad4] hover:text-[#1c1917]">
               Clear
             </button>
           )}
@@ -152,7 +152,7 @@ const Tickets = () => {
 
         {/* Create Form */}
         {showForm && (
-          <div className="rounded-2xl border border-[#e7e5e4] bg-white p-6">
+          <div className="rounded-2xl border border-[#cac5bf] bg-white p-6">
             <h2 className="mb-4 text-sm font-semibold text-[#1c1917]">New Ticket</h2>
             {error && (
               <div className="mb-4 rounded-xl border border-[#ef4444]/30 bg-[#ef4444]/10 px-4 py-2.5 text-sm text-[#ef4444]">{error}</div>
@@ -185,7 +185,7 @@ const Tickets = () => {
                   onChange={e => setForm({ ...form, description: e.target.value })} className={inputCls} />
               </div>
             </div>
-            <p className="mt-3 text-xs text-[#78716c]">AI will analyze this ticket and suggest a priority and category automatically.</p>
+            <p className="mt-3 text-xs text-[#57534e]">AI will analyze this ticket and suggest a priority and category automatically.</p>
             <button onClick={handleCreate}
               className="mt-4 rounded-xl bg-[#22c55e] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#16a34a] active:scale-95">
               Create Ticket
@@ -194,25 +194,25 @@ const Tickets = () => {
         )}
 
         {/* Table */}
-        <div className="overflow-hidden rounded-2xl border border-[#e7e5e4] bg-white">
+        <div className="overflow-hidden rounded-2xl border border-[#cac5bf] bg-white">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
               <thead>
-                <tr className="border-b border-[#e7e5e4]">
+                <tr className="border-b border-[#cac5bf]">
                   {['Title', 'Asset', 'Priority', 'AI Analysis', 'Status', 'Reporter', 'Update Status', 'Actions'].map(h => (
-                    <th key={h} className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">{h}</th>
+                    <th key={h} className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#57534e]">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f5f5f4]">
+              <tbody className="divide-y divide-[#dedad4]">
                 {paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-5 py-12 text-center text-sm text-[#a8a29e]">
+                    <td colSpan={8} className="px-5 py-12 text-center text-sm text-[#78716c]">
                       {tickets.length === 0 ? 'No tickets yet — create your first one above.' : 'No tickets match your filters.'}
                     </td>
                   </tr>
                 ) : paginated.map(ticket => (
-                  <tr key={ticket.id} className="transition-colors hover:bg-[#f5f5f4]">
+                  <tr key={ticket.id} className="transition-colors hover:bg-[#dedad4]">
                     <td className="max-w-50 px-5 py-4">
                       <Link to={`/tickets/${ticket.id}`} className="block truncate font-medium text-[#1c1917] hover:text-[#3b82f6] transition-colors">
                         {ticket.title}
@@ -227,7 +227,7 @@ const Tickets = () => {
                         </span>
                       )}
                     </td>
-                    <td className="px-5 py-4 text-[#57534e]">{ticket.asset_name || '—'}</td>
+                    <td className="px-5 py-4 text-[#44403c]">{ticket.asset_name || '—'}</td>
                     <td className="px-5 py-4">
                       <Pill label={ticket.priority} map={PRIORITY_CLS} />
                     </td>
@@ -238,25 +238,25 @@ const Tickets = () => {
                             <span className="text-[#a78bfa]"><SparkleIcon /></span>
                             <Pill label={ticket.ai_priority_suggestion} map={PRIORITY_CLS} />
                             {ticket.ai_category && (
-                              <span className="text-[10px] text-[#78716c]">{ticket.ai_category}</span>
+                              <span className="text-[10px] text-[#57534e]">{ticket.ai_category}</span>
                             )}
                           </div>
                           {ticket.ai_recommendation && (
-                            <p className="text-[11px] leading-snug text-[#57534e]">{ticket.ai_recommendation}</p>
+                            <p className="text-[11px] leading-snug text-[#44403c]">{ticket.ai_recommendation}</p>
                           )}
                         </div>
                       ) : (
-                        <span className="text-xs text-[#a8a29e]">—</span>
+                        <span className="text-xs text-[#78716c]">—</span>
                       )}
                     </td>
                     <td className="px-5 py-4">
                       <Pill label={ticket.status} map={STATUS_CLS} />
                     </td>
-                    <td className="px-5 py-4 text-[#57534e]">{ticket.reporter_name || '—'}</td>
+                    <td className="px-5 py-4 text-[#44403c]">{ticket.reporter_name || '—'}</td>
                     <td className="px-5 py-4">
                       {['admin', 'technician'].includes(user.role) && (
                         <select value={ticket.status} onChange={e => handleStatusUpdate(ticket.id, e.target.value)}
-                          className="rounded-lg border border-[#e7e5e4] bg-white px-2.5 py-1.5 text-xs text-[#1c1917] outline-none transition focus:border-[#3b82f6]/50 cursor-pointer">
+                          className="rounded-lg border border-[#cac5bf] bg-white px-2.5 py-1.5 text-xs text-[#1c1917] outline-none transition focus:border-[#3b82f6]/50 cursor-pointer">
                           <option value="open">Open</option>
                           <option value="in_progress">In Progress</option>
                           <option value="resolved">Resolved</option>
@@ -279,11 +279,11 @@ const Tickets = () => {
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-[#e7e5e4] px-5 py-3.5">
-              <span className="text-xs text-[#78716c]">Page {currentPage} of {totalPages} · {filtered.length} results</span>
+            <div className="flex items-center justify-between border-t border-[#cac5bf] px-5 py-3.5">
+              <span className="text-xs text-[#57534e]">Page {currentPage} of {totalPages} · {filtered.length} results</span>
               <div className="flex gap-2">
                 <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
-                  className="rounded-lg border border-[#e7e5e4] bg-transparent px-3 py-1.5 text-xs font-medium text-[#57534e] transition enabled:hover:bg-[#e7e5e4] disabled:opacity-40">
+                  className="rounded-lg border border-[#cac5bf] bg-transparent px-3 py-1.5 text-xs font-medium text-[#44403c] transition enabled:hover:bg-[#cac5bf] disabled:opacity-40">
                   Previous
                 </button>
                 <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}

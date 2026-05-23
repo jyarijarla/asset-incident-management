@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #fafaf9;
-  --card: #ffffff;
-  --card-surface: #f5f5f4;
-  --border: #e7e5e4;
-  --border-muted: #f5f5f4;
+  --bg: #e5e0da;
+  --card: #f7f4f0;
+  --card-surface: #dedad4;
+  --border: #cac5bf;
+  --border-muted: #dedad4;
   --text: #1c1917;
-  --text-muted: #57534e;
-  --text-dim: #a8a29e;
+  --text-muted: #44403c;
+  --text-dim: #78716c;
   --blue: #3b82f6;
   --blue-bright: #2563eb;
   --green: #22c55e;
@@ -19,7 +19,7 @@
 
 @layer base {
   * {
-    border-color: rgb(231 229 228 / 0.8);
+    border-color: rgb(202 197 191 / 0.8);
     box-sizing: border-box;
   }
 
@@ -38,9 +38,9 @@
 
     background-color: var(--bg);
     background-image:
-      radial-gradient(ellipse 80% 60% at 10% -5%, rgb(59 130 246 / 0.06), transparent),
-      radial-gradient(ellipse 60% 50% at 90% 5%, rgb(99 102 241 / 0.04), transparent),
-      radial-gradient(circle, rgb(0 0 0 / 0.028) 1px, transparent 1px);
+      radial-gradient(ellipse 80% 60% at 10% -5%, rgb(59 130 246 / 0.07), transparent),
+      radial-gradient(ellipse 60% 50% at 90% 5%, rgb(99 102 241 / 0.05), transparent),
+      radial-gradient(circle, rgb(0 0 0 / 0.045) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 28px 28px;
     background-attachment: fixed, fixed, fixed, fixed;
   }
@@ -73,11 +73,11 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #d6d3d1;
+    background: #bab5af;
     border-radius: 999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #a8a29e;
+    background: #78716c;
   }
 }
 
@@ -103,11 +103,11 @@
   }
 
   .card-glass {
-    background: rgb(255 255 255 / 0.92);
+    background: rgb(247 244 240 / 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgb(0 0 0 / 0.07);
-    box-shadow: 0 4px 24px rgb(0 0 0 / 0.06), 0 1px 0 rgb(255 255 255 / 0.9);
+    border: 1px solid rgb(0 0 0 / 0.09);
+    box-shadow: 0 4px 24px rgb(0 0 0 / 0.08), 0 1px 0 rgb(255 255 255 / 0.8);
   }
 
   .icon-glow {

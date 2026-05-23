@@ -29,7 +29,7 @@ const Navbar = () => {
       className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
         isActive(to)
           ? 'bg-[#3b82f6]/12 text-[#3b82f6]'
-          : 'text-[#57534e] hover:bg-[#f5f5f4] hover:text-[#1c1917]'
+          : 'text-[#44403c] hover:bg-[#dedad4] hover:text-[#1c1917]'
       }`}
     >
       {label}
@@ -37,7 +37,7 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[#e7e5e4] bg-white/90 backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 border-b border-[#cac5bf] bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex h-14 w-full max-w-350 items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* Left: brand + links */}
@@ -67,12 +67,12 @@ const Navbar = () => {
 
         {/* Right: user chip + logout */}
         <div className="flex items-center gap-2.5">
-          <div className="hidden rounded-full border border-[#e7e5e4] bg-white px-3 py-1.5 sm:flex items-center gap-2">
+          <div className="hidden rounded-full border border-[#cac5bf] bg-white px-3 py-1.5 sm:flex items-center gap-2">
             <div className="h-5 w-5 rounded-full bg-[#3b82f6]/15 flex items-center justify-center text-[9px] font-bold text-[#3b82f6]">
               {user.name?.charAt(0).toUpperCase()}
             </div>
-            <span className="text-xs text-[#57534e]">
-              {user.name} <span className="text-[#a8a29e]">· {user.role}</span>
+            <span className="text-xs text-[#44403c]">
+              {user.name} <span className="text-[#78716c]">· {user.role}</span>
             </span>
           </div>
           <button

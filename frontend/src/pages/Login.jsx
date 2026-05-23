@@ -29,7 +29,7 @@ const Spinner = () => (
   </svg>
 );
 
-const inputCls = 'w-full rounded-xl border border-[#e7e5e4] bg-white px-4 py-3 text-sm text-[#1c1917] placeholder:text-[#a8a29e] outline-none transition-all duration-150 focus:border-[#3b82f6]/50 focus:ring-2 focus:ring-[#3b82f6]/15 focus:bg-white';
+const inputCls = 'w-full rounded-xl border border-[#cac5bf] bg-white px-4 py-3 text-sm text-[#1c1917] placeholder:text-[#78716c] outline-none transition-all duration-150 focus:border-[#3b82f6]/50 focus:ring-2 focus:ring-[#3b82f6]/15 focus:bg-white';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -121,8 +121,8 @@ const Login = () => {
     <div className="flex min-h-screen">
 
       {/* ── Left brand panel (desktop only) ── */}
-      <div className="hidden lg:flex w-[420px] shrink-0 flex-col justify-between p-12 border-r border-[#e7e5e4]"
-        style={{ background: 'linear-gradient(160deg, rgb(59 130 246 / 0.08) 0%, rgb(99 102 241 / 0.04) 55%, transparent 80%), #f5f5f4' }}>
+      <div className="hidden lg:flex w-[420px] shrink-0 flex-col justify-between p-12 border-r border-[#cac5bf]"
+        style={{ background: 'linear-gradient(160deg, rgb(59 130 246 / 0.09) 0%, rgb(99 102 241 / 0.05) 55%, transparent 80%), #dedad4' }}>
 
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/20 icon-glow text-[#3b82f6]">
@@ -142,13 +142,13 @@ const Login = () => {
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/20">
                   <CheckIcon />
                 </span>
-                <span className="text-sm leading-relaxed text-[#78716c]">{f.text}</span>
+                <span className="text-sm leading-relaxed text-[#57534e]">{f.text}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="text-[11px] text-[#a8a29e]">Powered by Claude AI · Enterprise ready</p>
+        <p className="text-[11px] text-[#78716c]">Powered by Claude AI · Enterprise ready</p>
       </div>
 
       {/* ── Right form panel ── */}
@@ -165,7 +165,7 @@ const Login = () => {
                   <span className="text-sm font-bold text-[#1c1917]">AssetFlow</span>
                 </div>
                 <h1 className="text-2xl font-bold tracking-tight text-[#1c1917]">Welcome back</h1>
-                <p className="mt-1.5 text-sm text-[#78716c]">Sign in to your organization</p>
+                <p className="mt-1.5 text-sm text-[#57534e]">Sign in to your organization</p>
               </div>
 
               <div className="card-glass rounded-2xl p-7">
@@ -180,15 +180,15 @@ const Login = () => {
 
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-xs font-medium text-[#57534e]">Email</label>
+                    <label className="mb-1.5 block text-xs font-medium text-[#44403c]">Email</label>
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                       className={inputCls} placeholder="you@company.com" required autoComplete="email" />
                   </div>
                   <div>
                     <div className="mb-1.5 flex items-center justify-between">
-                      <label className="text-xs font-medium text-[#57534e]">Password</label>
+                      <label className="text-xs font-medium text-[#44403c]">Password</label>
                       <button type="button" onClick={switchToForgot}
-                        className="text-[11px] text-[#a8a29e] transition-colors hover:text-[#3b82f6]">
+                        className="text-[11px] text-[#78716c] transition-colors hover:text-[#3b82f6]">
                         Forgot password?
                       </button>
                     </div>
@@ -204,14 +204,14 @@ const Login = () => {
               </div>
 
               <div className="mt-6 space-y-2 text-center">
-                <p className="text-sm text-[#a8a29e]">
+                <p className="text-sm text-[#78716c]">
                   New here?{' '}
                   <Link to="/register" className="font-medium text-[#3b82f6] transition-colors hover:text-[#60a5fa]">
                     Create an organization
                   </Link>
                 </p>
                 <p>
-                  <Link to="/" className="text-sm text-[#a8a29e] transition-colors hover:text-[#78716c]">← Back to home</Link>
+                  <Link to="/" className="text-sm text-[#78716c] transition-colors hover:text-[#57534e]">← Back to home</Link>
                 </p>
               </div>
             </>
@@ -220,7 +220,7 @@ const Login = () => {
             <>
               <div className="mb-8">
                 <button type="button" onClick={switchToLogin}
-                  className="mb-6 flex items-center gap-1.5 text-sm text-[#a8a29e] transition-colors hover:text-[#57534e]">
+                  className="mb-6 flex items-center gap-1.5 text-sm text-[#78716c] transition-colors hover:text-[#44403c]">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="m15 18-6-6 6-6" />
                   </svg>
@@ -231,7 +231,7 @@ const Login = () => {
                    forgotStep === 'reset' ? 'Set a new password' :
                    'Password updated'}
                 </h1>
-                <p className="mt-1.5 text-sm text-[#78716c]">
+                <p className="mt-1.5 text-sm text-[#57534e]">
                   {forgotStep === 'email' && 'Enter your email to verify your account.'}
                   {forgotStep === 'reset' && `Verified as ${resetName}. Choose a new password.`}
                 </p>
@@ -246,14 +246,14 @@ const Login = () => {
                         <div className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold transition-colors ${
                           forgotStep === s ? 'bg-[#3b82f6] text-white' :
                           (i === 0 && forgotStep === 'reset') ? 'bg-[#22c55e]/20 text-[#22c55e] border border-[#22c55e]/30' :
-                          'bg-[#f5f5f4] text-[#a8a29e]'
+                          'bg-[#dedad4] text-[#78716c]'
                         }`}>
                           {i === 0 && forgotStep === 'reset' ? '✓' : i + 1}
                         </div>
-                        <span className={`text-xs ${forgotStep === s ? 'text-[#57534e]' : 'text-[#a8a29e]'}`}>
+                        <span className={`text-xs ${forgotStep === s ? 'text-[#44403c]' : 'text-[#78716c]'}`}>
                           {s === 'email' ? 'Verify' : 'Reset'}
                         </span>
-                        {i === 0 && <div className="h-px w-6 bg-[#f5f5f4]" />}
+                        {i === 0 && <div className="h-px w-6 bg-[#dedad4]" />}
                       </div>
                     ))}
                   </div>
@@ -271,7 +271,7 @@ const Login = () => {
                 {forgotStep === 'email' && (
                   <form onSubmit={handleVerifyEmail} className="space-y-4">
                     <div>
-                      <label className="mb-1.5 block text-xs font-medium text-[#57534e]">Email address</label>
+                      <label className="mb-1.5 block text-xs font-medium text-[#44403c]">Email address</label>
                       <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)}
                         className={inputCls} placeholder="you@company.com" required autoComplete="email" />
                     </div>
@@ -284,19 +284,19 @@ const Login = () => {
 
                 {forgotStep === 'reset' && (
                   <form onSubmit={handleResetPassword} className="space-y-4">
-                    <div className="flex items-center gap-2.5 rounded-xl border border-[#e7e5e4] bg-white px-4 py-3">
+                    <div className="flex items-center gap-2.5 rounded-xl border border-[#cac5bf] bg-white px-4 py-3">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
-                      <span className="text-sm text-[#78716c]">{resetEmail}</span>
+                      <span className="text-sm text-[#57534e]">{resetEmail}</span>
                     </div>
                     <div>
-                      <label className="mb-1.5 block text-xs font-medium text-[#57534e]">New password</label>
+                      <label className="mb-1.5 block text-xs font-medium text-[#44403c]">New password</label>
                       <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
                         className={inputCls} placeholder="••••••••" required autoComplete="new-password" />
                     </div>
                     <div>
-                      <label className="mb-1.5 block text-xs font-medium text-[#57534e]">Confirm password</label>
+                      <label className="mb-1.5 block text-xs font-medium text-[#44403c]">Confirm password</label>
                       <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
                         className={inputCls} placeholder="••••••••" required autoComplete="new-password" />
                     </div>
@@ -316,7 +316,7 @@ const Login = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-[#1c1917]">Password updated</p>
-                      <p className="mt-2 text-sm text-[#78716c]">You can now sign in with your new password.</p>
+                      <p className="mt-2 text-sm text-[#57534e]">You can now sign in with your new password.</p>
                     </div>
                     <button type="button" onClick={switchToLogin}
                       className="btn-primary w-full rounded-xl py-3 text-sm font-semibold text-white">
