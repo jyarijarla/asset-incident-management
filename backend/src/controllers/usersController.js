@@ -4,12 +4,13 @@ const bcrypt = require('bcryptjs');
 const getAllUsers = async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT users.id, users.name, users.email, users.department, 
+      SELECT users.id, users.name, users.email, users.department,
              users.created_at, roles.name as role
       FROM users
       JOIN roles ON users.role_id = roles.id
+      WHERE users.organization_id = $1
       ORDER BY users.created_at DESC
-    `);
+    `, [req.user.org_id]);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -25,8 +26,8 @@ const getUserById = async (req, res) => {
              users.created_at, roles.name as role
       FROM users
       JOIN roles ON users.role_id = roles.id
-      WHERE users.id = $1
-    `, [id]);
+      WHERE users.id = $1 AND users.organization_id = $2
+    `, [id, req.user.org_id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
@@ -65,9 +66,9 @@ const updateUser = async (req, res) => {
       SET name = COALESCE($1, name),
           department = COALESCE($2, department),
           role_id = COALESCE($3, role_id)
-      WHERE id = $4
+      WHERE id = $4 AND organization_id = $5
       RETURNING id, name, email, department, role_id
-    `, [name, department, role_id, id]);
+    `, [name, department, role_id, id, req.user.org_id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
@@ -88,8 +89,8 @@ const deleteUser = async (req, res) => {
     }
 
     const result = await pool.query(
-      'DELETE FROM users WHERE id = $1 RETURNING *',
-      [id]
+      'DELETE FROM users WHERE id = $1 AND organization_id = $2 RETURNING *',
+      [id, req.user.org_id]
     );
 
     if (result.rows.length === 0) {

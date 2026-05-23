@@ -1,80 +1,88 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+const INDUSTRY_LABELS = {
+  technology: 'Technology',
+  av_events: 'AV / Events',
+  healthcare: 'Healthcare',
+  restaurant: 'Restaurant',
+  education: 'Education',
+  manufacturing: 'Manufacturing',
+  retail: 'Retail',
+  other: 'Other',
+};
+
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, org, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  if (!user || location.pathname === '/login') return null;
+  const hiddenPaths = ['/', '/login', '/register'];
+  if (!user || hiddenPaths.includes(location.pathname)) return null;
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const navStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0 2rem',
-    height: '60px',
-    backgroundColor: '#1e1e2e',
-    color: '#fff',
-    position: 'sticky',
-    top: 0,
-    zIndex: 100,
-  };
-
-  const linkStyle = {
-    color: '#cdd6f4',
-    textDecoration: 'none',
-    marginRight: '1.5rem',
-    fontSize: '14px',
-  };
-
-  const activeLinkStyle = {
-    ...linkStyle,
-    color: '#89b4fa',
-    fontWeight: '500',
-  };
-
+  const handleLogout = () => { logout(); navigate('/'); };
   const isActive = (path) => location.pathname === path;
 
+  const navLink = (to, label) => (
+    <Link
+      to={to}
+      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+        isActive(to)
+          ? 'bg-[#3b82f6]/12 text-[#3b82f6]'
+          : 'text-[#a1a1aa] hover:bg-white/5 hover:text-[#fafafa]'
+      }`}
+    >
+      {label}
+    </Link>
+  );
+
   return (
-    <nav style={navStyle}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-        <span style={{ fontWeight: '600', fontSize: '16px' }}>
-          Asset Manager
-        </span>
-        <div>
-          <Link to="/dashboard" style={isActive('/dashboard') ? activeLinkStyle : linkStyle}>Dashboard</Link>
-          <Link to="/assets" style={isActive('/assets') ? activeLinkStyle : linkStyle}>Assets</Link>
-          <Link to="/tickets" style={isActive('/tickets') ? activeLinkStyle : linkStyle}>Tickets</Link>
-          {user.role === 'admin' && (
-            <Link to="/users" style={isActive('/users') ? activeLinkStyle : linkStyle}>Users</Link>
-          )}
+    <nav className="sticky top-0 z-50 border-b border-[#3f3f46]/60 bg-[#0f0f13]/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 w-full max-w-350 items-center justify-between px-4 sm:px-6 lg:px-8">
+
+        {/* Left: brand + links */}
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#3b82f6]/15 border border-[#3b82f6]/20">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+                <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
+              </svg>
+            </div>
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm font-semibold text-[#fafafa]">{org?.name || 'AssetFlow'}</span>
+              {org?.industry && (
+                <span className="text-[10px] font-medium text-[#3b82f6]/70">{INDUSTRY_LABELS[org.industry] || org.industry}</span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-0.5">
+            {navLink('/dashboard', 'Dashboard')}
+            {navLink('/assets', 'Assets')}
+            {navLink('/tickets', 'Tickets')}
+            {user.role === 'admin' && navLink('/users', 'Team')}
+          </div>
         </div>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <span style={{ fontSize: '13px', color: '#a6adc8' }}>
-          {user.name} · <span style={{ textTransform: 'capitalize' }}>{user.role}</span>
-        </span>
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: '6px 14px',
-            backgroundColor: '#f38ba8',
-            color: '#1e1e2e',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '13px',
-            fontWeight: '500',
-          }}
-        >
-          Logout
-        </button>
+
+        {/* Right: user chip + logout */}
+        <div className="flex items-center gap-2.5">
+          <div className="hidden rounded-full border border-[#3f3f46]/80 bg-[#18181b] px-3 py-1.5 sm:flex items-center gap-2">
+            <div className="h-5 w-5 rounded-full bg-[#3b82f6]/15 flex items-center justify-center text-[9px] font-bold text-[#3b82f6]">
+              {user.name?.charAt(0).toUpperCase()}
+            </div>
+            <span className="text-xs text-[#a1a1aa]">
+              {user.name} <span className="text-[#52525b]">· {user.role}</span>
+            </span>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="rounded-lg border border-[#ef4444]/30 bg-[#ef4444]/10 px-3 py-1.5 text-xs font-semibold text-[#ef4444] transition hover:bg-[#ef4444]/20 active:scale-95"
+          >
+            Logout
+          </button>
+        </div>
+
       </div>
     </nav>
   );

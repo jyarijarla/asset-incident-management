@@ -4,6 +4,7 @@ const helmet = require('helmet');
 require('dotenv').config();
 
 
+const migrate = require('./config/migrate');
 const authRoutes = require('./routes/auth');
 const assetRoutes = require('./routes/assets');
 const ticketRoutes = require('./routes/tickets');
@@ -33,8 +34,13 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+migrate().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch((err) => {
+  console.error('Startup migration failed:', err);
+  process.exit(1);
 });
 
 module.exports = app;

@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
+import PageLoader from '../components/PageLoader';
 
-const statusColors = {
-  active: { bg: '#a6e3a120', text: '#a6e3a1' },
-  inactive: { bg: '#45475a', text: '#a6adc8' },
-  under_maintenance: { bg: '#fab38720', text: '#fab387' },
+const STATUS_CLASSES = {
+  active: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
+  inactive: 'text-[#a1a1aa] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  under_maintenance: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
 };
+
+const inputCls = 'w-full rounded-xl border border-[#3f3f46] bg-[#0f0f13] px-3.5 py-2.5 text-sm text-[#fafafa] placeholder:text-[#52525b] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
+const labelCls = 'mb-1.5 block text-xs font-medium text-[#a1a1aa]';
+
+const SearchIcon = () => (
+  <svg className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#52525b]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+  </svg>
+);
 
 const Assets = () => {
   const { user } = useAuth();
@@ -18,290 +28,204 @@ const Assets = () => {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [filterType, setFilterType] = useState('');
-  const [form, setForm] = useState({
-    name: '',
-    asset_type_id: '',
-    serial_number: '',
-    status: 'active',
-    location: '',
-    purchase_date: '',
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+  const [form, setForm] = useState({ name: '', asset_type_id: '', serial_number: '', status: 'active', location: '', purchase_date: '' });
 
-  useEffect(() => {
-    fetchAssets();
-    fetchAssetTypes();
-  }, []);
+  useEffect(() => { fetchAssets(); fetchAssetTypes(); }, []);
 
   const fetchAssets = async () => {
-    try {
-      const res = await api.get('/assets');
-      setAssets(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    try { const r = await api.get('/assets'); setAssets(r.data); }
+    catch (e) { console.error(e); }
+    finally { setLoading(false); }
   };
 
   const fetchAssetTypes = async () => {
-    try {
-      const res = await api.get('/assets/types');
-      setAssetTypes(res.data);
-    } catch (err) {
-      setAssetTypes([
-        { id: 1, name: 'Laptop' },
-        { id: 2, name: 'Monitor' },
-        { id: 3, name: 'Server' },
-        { id: 4, name: 'Peripheral' },
-        { id: 5, name: 'Networking' },
-      ]);
-    }
+    try { const r = await api.get('/assets/types'); setAssetTypes(r.data); }
+    catch { setAssetTypes([]); }
   };
 
   const handleCreate = async () => {
+    setError('');
+    const missing = [];
+    if (!form.name.trim()) missing.push('Asset Name');
+    if (!form.serial_number.trim()) missing.push('Serial Number');
+    if (!form.asset_type_id) missing.push('Asset Type');
+    if (missing.length) return setError(`Required: ${missing.join(', ')}`);
     try {
-      setError('');
       await api.post('/assets', form);
       setShowForm(false);
       setForm({ name: '', asset_type_id: '', serial_number: '', status: 'active', location: '', purchase_date: '' });
       fetchAssets();
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create asset');
-    }
+    } catch (e) { setError(e.response?.data?.error || 'Failed to create asset'); }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this asset?')) return;
-    try {
-      await api.delete(`/assets/${id}`);
-      fetchAssets();
-    } catch (err) {
-      console.error(err);
-    }
+    if (!window.confirm('Delete this asset?')) return;
+    try { await api.delete(`/assets/${id}`); fetchAssets(); }
+    catch (e) { console.error(e); }
   };
 
   const uniqueTypes = [...new Set(assets.map(a => a.asset_type).filter(Boolean))];
-
-  const filteredAssets = assets.filter(asset => {
-    const matchesSearch = search === '' ||
-      asset.name.toLowerCase().includes(search.toLowerCase()) ||
-      asset.serial_number.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = filterStatus === '' || asset.status === filterStatus;
-    const matchesType = filterType === '' || asset.asset_type === filterType;
-    return matchesSearch && matchesStatus && matchesType;
+  const filtered = assets.filter(a => {
+    const s = search.toLowerCase();
+    const matchSearch = !s || a.name.toLowerCase().includes(s) || (a.serial_number || '').toLowerCase().includes(s);
+    return matchSearch && (!filterStatus || a.status === filterStatus) && (!filterType || a.asset_type === filterType);
   });
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const hasFilters = search || filterStatus || filterType;
 
-  if (loading) return <div style={{ padding: '2rem', color: '#cdd6f4' }}>Loading...</div>;
+  if (loading) return <PageLoader variant="table" title="Loading assets" subtitle="Fetching inventory and table data..." />;
 
   return (
-    <div style={{ padding: '2rem', backgroundColor: '#1e1e2e', minHeight: '100vh' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <div>
-          <h1 style={{ color: '#cdd6f4', fontSize: '22px', margin: '0 0 4px' }}>Assets</h1>
-          <p style={{ color: '#a6adc8', fontSize: '14px', margin: 0 }}>
-            {filteredAssets.length} of {assets.length} assets
-          </p>
+    <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-350 space-y-5">
+
+        {/* Header */}
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-[#fafafa]">Assets</h1>
+            <p className="mt-0.5 text-sm text-[#71717a]">{filtered.length} of {assets.length} assets</p>
+          </div>
+          {user.role === 'admin' && (
+            <button onClick={() => setShowForm(v => !v)}
+              className="rounded-xl bg-[#3b82f6] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2563eb] active:scale-95">
+              {showForm ? 'Cancel' : '+ New Asset'}
+            </button>
+          )}
         </div>
-        {user.role === 'admin' && (
-          <button
-            onClick={() => setShowForm(!showForm)}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#89b4fa',
-              color: '#1e1e2e',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-            }}
-          >
-            {showForm ? 'Cancel' : '+ New Asset'}
-          </button>
-        )}
-      </div>
 
-      {/* Search and Filter Bar */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        <input
-          type="text"
-          placeholder="Search by name or serial number..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            flex: 2,
-            padding: '8px 12px',
-            backgroundColor: '#313244',
-            border: '1px solid #45475a',
-            borderRadius: '8px',
-            color: '#cdd6f4',
-            fontSize: '14px',
-            minWidth: '200px',
-          }}
-        />
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          style={{
-            flex: 1,
-            padding: '8px 12px',
-            backgroundColor: '#313244',
-            border: '1px solid #45475a',
-            borderRadius: '8px',
-            color: '#cdd6f4',
-            fontSize: '14px',
-            minWidth: '150px',
-          }}
-        >
-          <option value="">All Statuses</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="under_maintenance">Under Maintenance</option>
-        </select>
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          style={{
-            flex: 1,
-            padding: '8px 12px',
-            backgroundColor: '#313244',
-            border: '1px solid #45475a',
-            borderRadius: '8px',
-            color: '#cdd6f4',
-            fontSize: '14px',
-            minWidth: '150px',
-          }}
-        >
-          <option value="">All Types</option>
-          {uniqueTypes.map(type => (
-            <option key={type} value={type}>{type}</option>
-          ))}
-        </select>
-        {(search || filterStatus || filterType) && (
-          <button
-            onClick={() => { setSearch(''); setFilterStatus(''); setFilterType(''); }}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: 'transparent',
-              border: '1px solid #45475a',
-              borderRadius: '8px',
-              color: '#a6adc8',
-              fontSize: '14px',
-              cursor: 'pointer',
-            }}
-          >
-            Clear
-          </button>
-        )}
-      </div>
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2.5">
+          <div className="relative min-w-50 flex-2">
+            <SearchIcon />
+            <input className={`${inputCls} pl-9`} type="text" placeholder="Search by name or serial number..."
+              value={search} onChange={e => { setSearch(e.target.value); setCurrentPage(1); }} />
+          </div>
+          <select className={`${inputCls} min-w-37.5 flex-1 cursor-pointer`} value={filterStatus}
+            onChange={e => { setFilterStatus(e.target.value); setCurrentPage(1); }}>
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="under_maintenance">Under Maintenance</option>
+          </select>
+          <select className={`${inputCls} min-w-37.5 flex-1 cursor-pointer`} value={filterType}
+            onChange={e => { setFilterType(e.target.value); setCurrentPage(1); }}>
+            <option value="">All Types</option>
+            {uniqueTypes.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+          {hasFilters && (
+            <button onClick={() => { setSearch(''); setFilterStatus(''); setFilterType(''); setCurrentPage(1); }}
+              className="rounded-xl border border-[#3f3f46] bg-transparent px-4 py-2.5 text-sm text-[#a1a1aa] transition hover:bg-[#3f3f46]/30 hover:text-[#fafafa]">
+              Clear
+            </button>
+          )}
+        </div>
 
-      {showForm && (
-        <div style={{ backgroundColor: '#313244', borderRadius: '12px', padding: '1.5rem', marginBottom: '2rem' }}>
-          <h2 style={{ color: '#cdd6f4', fontSize: '16px', marginBottom: '1rem' }}>New Asset</h2>
-          {error && (
-            <div style={{ backgroundColor: '#f38ba820', border: '1px solid #f38ba8', color: '#f38ba8', padding: '10px', borderRadius: '8px', marginBottom: '1rem', fontSize: '14px' }}>
-              {error}
+        {/* Create Form */}
+        {showForm && (
+          <div className="rounded-2xl border border-[#3f3f46]/60 bg-[#18181b] p-6">
+            <h2 className="mb-4 text-sm font-semibold text-[#fafafa]">New Asset</h2>
+            {error && (
+              <div className="mb-4 rounded-xl border border-[#ef4444]/30 bg-[#ef4444]/10 px-4 py-2.5 text-sm text-[#ef4444]">{error}</div>
+            )}
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { label: 'Asset Name *', key: 'name', type: 'text', placeholder: 'MacBook Pro' },
+                { label: 'Serial Number *', key: 'serial_number', type: 'text', placeholder: 'MBP-2024-001' },
+                { label: 'Location', key: 'location', type: 'text', placeholder: 'Office A' },
+                { label: 'Purchase Date', key: 'purchase_date', type: 'date', placeholder: '' },
+              ].map(f => (
+                <div key={f.key}>
+                  <label className={labelCls}>{f.label}</label>
+                  <input type={f.type} value={form[f.key]} placeholder={f.placeholder}
+                    onChange={e => setForm({ ...form, [f.key]: e.target.value })} className={inputCls} />
+                </div>
+              ))}
+              <div>
+                <label className={labelCls}>Asset Type *</label>
+                <select value={form.asset_type_id} onChange={e => setForm({ ...form, asset_type_id: e.target.value })} className={`${inputCls} cursor-pointer`}>
+                  <option value="">Select type</option>
+                  {assetTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className={labelCls}>Status</label>
+                <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className={`${inputCls} cursor-pointer`}>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="under_maintenance">Under Maintenance</option>
+                </select>
+              </div>
+            </div>
+            <button onClick={handleCreate}
+              className="mt-5 rounded-xl bg-[#22c55e] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#16a34a] active:scale-95">
+              Create Asset
+            </button>
+          </div>
+        )}
+
+        {/* Table */}
+        <div className="overflow-hidden rounded-2xl border border-[#3f3f46]/60 bg-[#18181b]">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-[#3f3f46]/60">
+                  {['Name', 'Type', 'Serial Number', 'Status', 'Location', 'Assigned To', 'Actions'].map(h => (
+                    <th key={h} className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#71717a]">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#3f3f46]/40">
+                {paginated.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-5 py-12 text-center text-sm text-[#3f3f46]">
+                      {assets.length === 0 ? 'No assets yet — create your first one above.' : 'No assets match your filters.'}
+                    </td>
+                  </tr>
+                ) : paginated.map(asset => (
+                  <tr key={asset.id} className="transition-colors hover:bg-white/[0.03]">
+                    <td className="px-5 py-3.5 font-medium text-[#fafafa]">{asset.name}</td>
+                    <td className="px-5 py-3.5 text-[#a1a1aa]">{asset.asset_type || '—'}</td>
+                    <td className="px-5 py-3.5 font-mono text-xs text-[#a1a1aa]">{asset.serial_number}</td>
+                    <td className="px-5 py-3.5">
+                      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${STATUS_CLASSES[asset.status] || 'text-[#a1a1aa] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
+                        {asset.status.replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-[#a1a1aa]">{asset.location || '—'}</td>
+                    <td className="px-5 py-3.5 text-[#a1a1aa]">{asset.assigned_to || '—'}</td>
+                    <td className="px-5 py-3.5">
+                      {user.role === 'admin' && (
+                        <button onClick={() => handleDelete(asset.id)}
+                          className="rounded-lg border border-[#ef4444]/30 bg-[#ef4444]/10 px-3 py-1 text-xs font-medium text-[#ef4444] transition hover:bg-[#ef4444]/20">
+                          Delete
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-[#3f3f46]/60 px-5 py-3.5">
+              <span className="text-xs text-[#71717a]">Page {currentPage} of {totalPages} · {filtered.length} results</span>
+              <div className="flex gap-2">
+                <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
+                  className="rounded-lg border border-[#3f3f46] bg-transparent px-3 py-1.5 text-xs font-medium text-[#a1a1aa] transition enabled:hover:bg-[#3f3f46]/50 disabled:opacity-40">
+                  Previous
+                </button>
+                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                  className="rounded-lg bg-[#3b82f6] px-3 py-1.5 text-xs font-medium text-white transition enabled:hover:bg-[#2563eb] disabled:opacity-40">
+                  Next
+                </button>
+              </div>
             </div>
           )}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            {[
-              { label: 'Asset Name', key: 'name', type: 'text', placeholder: 'MacBook Pro' },
-              { label: 'Serial Number', key: 'serial_number', type: 'text', placeholder: 'MBP-2024-001' },
-              { label: 'Location', key: 'location', type: 'text', placeholder: 'Office A' },
-              { label: 'Purchase Date', key: 'purchase_date', type: 'date', placeholder: '' },
-            ].map(field => (
-              <div key={field.key}>
-                <label style={{ display: 'block', color: '#cdd6f4', marginBottom: '6px', fontSize: '13px' }}>{field.label}</label>
-                <input
-                  type={field.type}
-                  value={form[field.key]}
-                  onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
-                  placeholder={field.placeholder}
-                  style={{ width: '100%', padding: '8px 12px', backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '8px', color: '#cdd6f4', fontSize: '14px', boxSizing: 'border-box' }}
-                />
-              </div>
-            ))}
-            <div>
-              <label style={{ display: 'block', color: '#cdd6f4', marginBottom: '6px', fontSize: '13px' }}>Asset Type</label>
-              <select
-                value={form.asset_type_id}
-                onChange={(e) => setForm({ ...form, asset_type_id: e.target.value })}
-                style={{ width: '100%', padding: '8px 12px', backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '8px', color: '#cdd6f4', fontSize: '14px', boxSizing: 'border-box' }}
-              >
-                <option value="">Select type</option>
-                {assetTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={{ display: 'block', color: '#cdd6f4', marginBottom: '6px', fontSize: '13px' }}>Status</label>
-              <select
-                value={form.status}
-                onChange={(e) => setForm({ ...form, status: e.target.value })}
-                style={{ width: '100%', padding: '8px 12px', backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '8px', color: '#cdd6f4', fontSize: '14px', boxSizing: 'border-box' }}
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="under_maintenance">Under Maintenance</option>
-              </select>
-            </div>
-          </div>
-          <button
-            onClick={handleCreate}
-            style={{ marginTop: '1rem', padding: '8px 20px', backgroundColor: '#a6e3a1', color: '#1e1e2e', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
-          >
-            Create Asset
-          </button>
         </div>
-      )}
-
-      <div style={{ backgroundColor: '#313244', borderRadius: '12px', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ backgroundColor: '#45475a' }}>
-              {['Name', 'Type', 'Serial Number', 'Status', 'Location', 'Assigned To', 'Actions'].map(h => (
-                <th key={h} style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '13px', fontWeight: '500', textAlign: 'left' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredAssets.length === 0 ? (
-              <tr>
-                <td colSpan={7} style={{ padding: '2rem', textAlign: 'center', color: '#a6adc8', fontSize: '14px' }}>
-                  {assets.length === 0 ? 'No assets yet. Create your first asset above.' : 'No assets match your search.'}
-                </td>
-              </tr>
-            ) : (
-              filteredAssets.map((asset, i) => (
-                <tr key={asset.id} style={{ borderTop: '1px solid #45475a', backgroundColor: i % 2 === 0 ? 'transparent' : '#2a2a3a' }}>
-                  <td style={{ padding: '12px 16px', color: '#cdd6f4', fontSize: '14px' }}>{asset.name}</td>
-                  <td style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '14px' }}>{asset.asset_type || '—'}</td>
-                  <td style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '14px', fontFamily: 'monospace' }}>{asset.serial_number}</td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <span style={{
-                      fontSize: '12px', padding: '2px 10px', borderRadius: '99px',
-                      backgroundColor: statusColors[asset.status]?.bg,
-                      color: statusColors[asset.status]?.text,
-                    }}>
-                      {asset.status.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '14px' }}>{asset.location || '—'}</td>
-                  <td style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '14px' }}>{asset.assigned_to || '—'}</td>
-                  <td style={{ padding: '12px 16px' }}>
-                    {user.role === 'admin' && (
-                      <button
-                        onClick={() => handleDelete(asset.id)}
-                        style={{ padding: '4px 12px', backgroundColor: '#f38ba820', color: '#f38ba8', border: '1px solid #f38ba8', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
       </div>
     </div>
   );

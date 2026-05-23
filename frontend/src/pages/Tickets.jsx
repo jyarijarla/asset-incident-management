@@ -1,20 +1,42 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
+import PageLoader from '../components/PageLoader';
 
-const statusColors = {
-  open: { bg: '#f38ba820', text: '#f38ba8' },
-  in_progress: { bg: '#fab38720', text: '#fab387' },
-  resolved: { bg: '#a6e3a120', text: '#a6e3a1' },
-  closed: { bg: '#45475a', text: '#a6adc8' },
+const STATUS_CLS = {
+  open: 'text-[#ef4444] bg-[#ef4444]/10 border-[#ef4444]/25',
+  in_progress: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
+  resolved: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
+  closed: 'text-[#a1a1aa] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+};
+const PRIORITY_CLS = {
+  low: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
+  medium: 'text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/25',
+  high: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
+  critical: 'text-[#ef4444] bg-[#ef4444]/10 border-[#ef4444]/25',
 };
 
-const priorityColors = {
-  low: { bg: '#a6e3a120', text: '#a6e3a1' },
-  medium: { bg: '#89b4fa20', text: '#89b4fa' },
-  high: { bg: '#fab38720', text: '#fab387' },
-  critical: { bg: '#f38ba820', text: '#f38ba8' },
-};
+const Pill = ({ label, map }) => (
+  <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${map[label] || 'text-[#a1a1aa] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
+    {label.replace('_', ' ')}
+  </span>
+);
+
+const inputCls = 'w-full rounded-xl border border-[#3f3f46] bg-[#0f0f13] px-3.5 py-2.5 text-sm text-[#fafafa] placeholder:text-[#52525b] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
+const labelCls = 'mb-1.5 block text-xs font-medium text-[#a1a1aa]';
+
+const SearchIcon = () => (
+  <svg className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#52525b]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+  </svg>
+);
+
+const SparkleIcon = () => (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
+  </svg>
+);
 
 const Tickets = () => {
   const { user } = useAuth();
@@ -26,341 +48,252 @@ const Tickets = () => {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [filterPriority, setFilterPriority] = useState('');
-  const [form, setForm] = useState({
-    title: '',
-    description: '',
-    asset_id: '',
-    priority: 'medium',
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+  const [form, setForm] = useState({ title: '', description: '', asset_id: '', priority: 'medium' });
 
-  useEffect(() => {
-    fetchTickets();
-    fetchAssets();
-  }, []);
+  useEffect(() => { fetchTickets(); fetchAssets(); }, []);
 
   const fetchTickets = async () => {
-    try {
-      const res = await api.get('/tickets');
-      setTickets(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    try { const r = await api.get('/tickets'); setTickets(r.data); }
+    catch (e) { console.error(e); }
+    finally { setLoading(false); }
   };
-
   const fetchAssets = async () => {
-    try {
-      const res = await api.get('/assets');
-      setAssets(res.data);
-    } catch (err) {
-      console.error(err);
-    }
+    try { const r = await api.get('/assets'); setAssets(r.data); }
+    catch (e) { console.error(e); }
   };
 
   const handleCreate = async () => {
+    setError('');
+    const missing = [];
+    if (!form.title.trim()) missing.push('Title');
+    if (!form.asset_id) missing.push('Asset');
+    if (!form.description.trim()) missing.push('Description');
+    if (missing.length) return setError(`Required: ${missing.join(', ')}`);
     try {
-      setError('');
       await api.post('/tickets', form);
       setShowForm(false);
       setForm({ title: '', description: '', asset_id: '', priority: 'medium' });
       fetchTickets();
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create ticket');
-    }
+    } catch (e) { setError(e.response?.data?.error || 'Failed to create ticket'); }
   };
 
   const handleStatusUpdate = async (id, status) => {
-    try {
-      await api.put(`/tickets/${id}`, { status });
-      fetchTickets();
-    } catch (err) {
-      console.error(err);
-    }
+    try { await api.put(`/tickets/${id}`, { status }); fetchTickets(); }
+    catch (e) { console.error(e); }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this ticket?')) return;
-    try {
-      await api.delete(`/tickets/${id}`);
-      fetchTickets();
-    } catch (err) {
-      console.error(err);
-    }
+    if (!window.confirm('Delete this ticket?')) return;
+    try { await api.delete(`/tickets/${id}`); fetchTickets(); }
+    catch (e) { console.error(e); }
   };
 
-  const filteredTickets = tickets.filter(ticket => {
-    const matchesSearch = search === '' ||
-      ticket.title.toLowerCase().includes(search.toLowerCase()) ||
-      (ticket.asset_name && ticket.asset_name.toLowerCase().includes(search.toLowerCase()));
-    const matchesStatus = filterStatus === '' || ticket.status === filterStatus;
-    const matchesPriority = filterPriority === '' || ticket.priority === filterPriority;
-    return matchesSearch && matchesStatus && matchesPriority;
+  const filtered = tickets.filter(t => {
+    const s = search.toLowerCase();
+    const matchSearch = !s || t.title.toLowerCase().includes(s) || (t.asset_name || '').toLowerCase().includes(s);
+    return matchSearch && (!filterStatus || t.status === filterStatus) && (!filterPriority || t.priority === filterPriority);
   });
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const hasFilters = search || filterStatus || filterPriority;
 
-  if (loading) return <div style={{ padding: '2rem', color: '#cdd6f4' }}>Loading...</div>;
+  if (loading) return <PageLoader variant="table" title="Loading tickets" subtitle="Refreshing incidents, AI suggestions, and status updates..." />;
 
   return (
-    <div style={{ padding: '2rem', backgroundColor: '#1e1e2e', minHeight: '100vh' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <div>
-          <h1 style={{ color: '#cdd6f4', fontSize: '22px', margin: '0 0 4px' }}>Tickets</h1>
-          <p style={{ color: '#a6adc8', fontSize: '14px', margin: 0 }}>
-            {filteredTickets.length} of {tickets.length} tickets
-          </p>
+    <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-350 space-y-5">
+
+        {/* Header */}
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-[#fafafa]">Tickets</h1>
+            <p className="mt-0.5 text-sm text-[#71717a]">{filtered.length} of {tickets.length} tickets</p>
+          </div>
+          {['admin', 'technician'].includes(user.role) && (
+            <button onClick={() => setShowForm(v => !v)}
+              className="rounded-xl bg-[#3b82f6] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2563eb] active:scale-95">
+              {showForm ? 'Cancel' : '+ New Ticket'}
+            </button>
+          )}
         </div>
-        {['admin', 'technician'].includes(user.role) && (
-          <button
-            onClick={() => setShowForm(!showForm)}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#89b4fa',
-              color: '#1e1e2e',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-            }}
-          >
-            {showForm ? 'Cancel' : '+ New Ticket'}
-          </button>
-        )}
-      </div>
 
-      {/* Search and Filter Bar */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        <input
-          type="text"
-          placeholder="Search by title or asset..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            flex: 2,
-            padding: '8px 12px',
-            backgroundColor: '#313244',
-            border: '1px solid #45475a',
-            borderRadius: '8px',
-            color: '#cdd6f4',
-            fontSize: '14px',
-            minWidth: '200px',
-          }}
-        />
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          style={{
-            flex: 1,
-            padding: '8px 12px',
-            backgroundColor: '#313244',
-            border: '1px solid #45475a',
-            borderRadius: '8px',
-            color: '#cdd6f4',
-            fontSize: '14px',
-            minWidth: '150px',
-          }}
-        >
-          <option value="">All Statuses</option>
-          <option value="open">Open</option>
-          <option value="in_progress">In Progress</option>
-          <option value="resolved">Resolved</option>
-          <option value="closed">Closed</option>
-        </select>
-        <select
-          value={filterPriority}
-          onChange={(e) => setFilterPriority(e.target.value)}
-          style={{
-            flex: 1,
-            padding: '8px 12px',
-            backgroundColor: '#313244',
-            border: '1px solid #45475a',
-            borderRadius: '8px',
-            color: '#cdd6f4',
-            fontSize: '14px',
-            minWidth: '150px',
-          }}
-        >
-          <option value="">All Priorities</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="critical">Critical</option>
-        </select>
-        {(search || filterStatus || filterPriority) && (
-          <button
-            onClick={() => { setSearch(''); setFilterStatus(''); setFilterPriority(''); }}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: 'transparent',
-              border: '1px solid #45475a',
-              borderRadius: '8px',
-              color: '#a6adc8',
-              fontSize: '14px',
-              cursor: 'pointer',
-            }}
-          >
-            Clear
-          </button>
-        )}
-      </div>
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2.5">
+          <div className="relative min-w-50 flex-2">
+            <SearchIcon />
+            <input className={`${inputCls} pl-9`} type="text" placeholder="Search by title or asset..."
+              value={search} onChange={e => { setSearch(e.target.value); setCurrentPage(1); }} />
+          </div>
+          <select className={`${inputCls} min-w-37.5 flex-1 cursor-pointer`} value={filterStatus}
+            onChange={e => { setFilterStatus(e.target.value); setCurrentPage(1); }}>
+            <option value="">All Statuses</option>
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="closed">Closed</option>
+          </select>
+          <select className={`${inputCls} min-w-37.5 flex-1 cursor-pointer`} value={filterPriority}
+            onChange={e => { setFilterPriority(e.target.value); setCurrentPage(1); }}>
+            <option value="">All Priorities</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+          {hasFilters && (
+            <button onClick={() => { setSearch(''); setFilterStatus(''); setFilterPriority(''); setCurrentPage(1); }}
+              className="rounded-xl border border-[#3f3f46] bg-transparent px-4 py-2.5 text-sm text-[#a1a1aa] transition hover:bg-[#3f3f46]/30 hover:text-[#fafafa]">
+              Clear
+            </button>
+          )}
+        </div>
 
-      {showForm && (
-        <div style={{ backgroundColor: '#313244', borderRadius: '12px', padding: '1.5rem', marginBottom: '2rem' }}>
-          <h2 style={{ color: '#cdd6f4', fontSize: '16px', marginBottom: '1rem' }}>New Ticket</h2>
-          {error && (
-            <div style={{ backgroundColor: '#f38ba820', border: '1px solid #f38ba8', color: '#f38ba8', padding: '10px', borderRadius: '8px', marginBottom: '1rem', fontSize: '14px' }}>
-              {error}
+        {/* Create Form */}
+        {showForm && (
+          <div className="rounded-2xl border border-[#3f3f46]/60 bg-[#18181b] p-6">
+            <h2 className="mb-4 text-sm font-semibold text-[#fafafa]">New Ticket</h2>
+            {error && (
+              <div className="mb-4 rounded-xl border border-[#ef4444]/30 bg-[#ef4444]/10 px-4 py-2.5 text-sm text-[#ef4444]">{error}</div>
+            )}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className={labelCls}>Title *</label>
+                <input type="text" value={form.title} placeholder="Screen not turning on"
+                  onChange={e => setForm({ ...form, title: e.target.value })} className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Asset *</label>
+                <select value={form.asset_id} onChange={e => setForm({ ...form, asset_id: e.target.value })} className={`${inputCls} cursor-pointer`}>
+                  <option value="">Select asset</option>
+                  {assets.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className={labelCls}>Priority</label>
+                <select value={form.priority} onChange={e => setForm({ ...form, priority: e.target.value })} className={`${inputCls} cursor-pointer`}>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelCls}>Description *</label>
+                <input type="text" value={form.description} placeholder="Describe the issue..."
+                  onChange={e => setForm({ ...form, description: e.target.value })} className={inputCls} />
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-[#71717a]">AI will analyze this ticket and suggest a priority and category automatically.</p>
+            <button onClick={handleCreate}
+              className="mt-4 rounded-xl bg-[#22c55e] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#16a34a] active:scale-95">
+              Create Ticket
+            </button>
+          </div>
+        )}
+
+        {/* Table */}
+        <div className="overflow-hidden rounded-2xl border border-[#3f3f46]/60 bg-[#18181b]">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-[#3f3f46]/60">
+                  {['Title', 'Asset', 'Priority', 'AI Analysis', 'Status', 'Reporter', 'Update Status', 'Actions'].map(h => (
+                    <th key={h} className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#71717a]">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#3f3f46]/40">
+                {paginated.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="px-5 py-12 text-center text-sm text-[#3f3f46]">
+                      {tickets.length === 0 ? 'No tickets yet — create your first one above.' : 'No tickets match your filters.'}
+                    </td>
+                  </tr>
+                ) : paginated.map(ticket => (
+                  <tr key={ticket.id} className="transition-colors hover:bg-white/3">
+                    <td className="max-w-50 px-5 py-4">
+                      <Link to={`/tickets/${ticket.id}`} className="block truncate font-medium text-[#fafafa] hover:text-[#3b82f6] transition-colors">
+                        {ticket.title}
+                      </Link>
+                      {ticket.ai_grade && (
+                        <span className={`mt-1 inline-block text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
+                          ['A','B'].includes(ticket.ai_grade) ? 'bg-[#22c55e]/15 text-[#22c55e]' :
+                          ticket.ai_grade === 'C' ? 'bg-[#f59e0b]/15 text-[#f59e0b]' :
+                          'bg-[#ef4444]/15 text-[#ef4444]'
+                        }`}>
+                          Grade {ticket.ai_grade}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-5 py-4 text-[#a1a1aa]">{ticket.asset_name || '—'}</td>
+                    <td className="px-5 py-4">
+                      <Pill label={ticket.priority} map={PRIORITY_CLS} />
+                    </td>
+                    <td className="px-5 py-4">
+                      {ticket.ai_priority_suggestion ? (
+                        <div className="rounded-lg border border-[#a78bfa]/20 bg-[#a78bfa]/5 px-3 py-2 space-y-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[#a78bfa]"><SparkleIcon /></span>
+                            <Pill label={ticket.ai_priority_suggestion} map={PRIORITY_CLS} />
+                            {ticket.ai_category && (
+                              <span className="text-[10px] text-[#71717a]">{ticket.ai_category}</span>
+                            )}
+                          </div>
+                          {ticket.ai_recommendation && (
+                            <p className="text-[11px] leading-snug text-[#a1a1aa]">{ticket.ai_recommendation}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-[#3f3f46]">—</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-4">
+                      <Pill label={ticket.status} map={STATUS_CLS} />
+                    </td>
+                    <td className="px-5 py-4 text-[#a1a1aa]">{ticket.reporter_name || '—'}</td>
+                    <td className="px-5 py-4">
+                      {['admin', 'technician'].includes(user.role) && (
+                        <select value={ticket.status} onChange={e => handleStatusUpdate(ticket.id, e.target.value)}
+                          className="rounded-lg border border-[#3f3f46] bg-[#0f0f13] px-2.5 py-1.5 text-xs text-[#fafafa] outline-none transition focus:border-[#3b82f6]/50 cursor-pointer">
+                          <option value="open">Open</option>
+                          <option value="in_progress">In Progress</option>
+                          <option value="resolved">Resolved</option>
+                          <option value="closed">Closed</option>
+                        </select>
+                      )}
+                    </td>
+                    <td className="px-5 py-4">
+                      {user.role === 'admin' && (
+                        <button onClick={() => handleDelete(ticket.id)}
+                          className="rounded-lg border border-[#ef4444]/30 bg-[#ef4444]/10 px-3 py-1 text-xs font-medium text-[#ef4444] transition hover:bg-[#ef4444]/20">
+                          Delete
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-[#3f3f46]/60 px-5 py-3.5">
+              <span className="text-xs text-[#71717a]">Page {currentPage} of {totalPages} · {filtered.length} results</span>
+              <div className="flex gap-2">
+                <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
+                  className="rounded-lg border border-[#3f3f46] bg-transparent px-3 py-1.5 text-xs font-medium text-[#a1a1aa] transition enabled:hover:bg-[#3f3f46]/50 disabled:opacity-40">
+                  Previous
+                </button>
+                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                  className="rounded-lg bg-[#3b82f6] px-3 py-1.5 text-xs font-medium text-white transition enabled:hover:bg-[#2563eb] disabled:opacity-40">
+                  Next
+                </button>
+              </div>
             </div>
           )}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div>
-              <label style={{ display: 'block', color: '#cdd6f4', marginBottom: '6px', fontSize: '13px' }}>Title</label>
-              <input
-                type="text"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="Screen not turning on"
-                style={{ width: '100%', padding: '8px 12px', backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '8px', color: '#cdd6f4', fontSize: '14px', boxSizing: 'border-box' }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', color: '#cdd6f4', marginBottom: '6px', fontSize: '13px' }}>Asset</label>
-              <select
-                value={form.asset_id}
-                onChange={(e) => setForm({ ...form, asset_id: e.target.value })}
-                style={{ width: '100%', padding: '8px 12px', backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '8px', color: '#cdd6f4', fontSize: '14px', boxSizing: 'border-box' }}
-              >
-                <option value="">Select asset</option>
-                {assets.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={{ display: 'block', color: '#cdd6f4', marginBottom: '6px', fontSize: '13px' }}>Priority</label>
-              <select
-                value={form.priority}
-                onChange={(e) => setForm({ ...form, priority: e.target.value })}
-                style={{ width: '100%', padding: '8px 12px', backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '8px', color: '#cdd6f4', fontSize: '14px', boxSizing: 'border-box' }}
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="critical">Critical</option>
-              </select>
-            </div>
-            <div>
-              <label style={{ display: 'block', color: '#cdd6f4', marginBottom: '6px', fontSize: '13px' }}>Description</label>
-              <input
-                type="text"
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="Describe the issue..."
-                style={{ width: '100%', padding: '8px 12px', backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '8px', color: '#cdd6f4', fontSize: '14px', boxSizing: 'border-box' }}
-              />
-            </div>
-          </div>
-          <button
-            onClick={handleCreate}
-            style={{ marginTop: '1rem', padding: '8px 20px', backgroundColor: '#a6e3a1', color: '#1e1e2e', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
-          >
-            Create Ticket
-          </button>
         </div>
-      )}
-
-      <div style={{ backgroundColor: '#313244', borderRadius: '12px', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ backgroundColor: '#45475a' }}>
-              {['Title', 'Asset', 'Priority', 'AI Suggestion', 'Status', 'Reporter', 'Update Status', 'Actions'].map(h => (
-                <th key={h} style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '13px', fontWeight: '500', textAlign: 'left' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTickets.length === 0 ? (
-              <tr>
-                <td colSpan={8} style={{ padding: '2rem', textAlign: 'center', color: '#a6adc8', fontSize: '14px' }}>
-                  {tickets.length === 0 ? 'No tickets yet. Create your first ticket above.' : 'No tickets match your search.'}
-                </td>
-              </tr>
-            ) : (
-              filteredTickets.map((ticket, i) => (
-                <tr key={ticket.id} style={{ borderTop: '1px solid #45475a', backgroundColor: i % 2 === 0 ? 'transparent' : '#2a2a3a' }}>
-                  <td style={{ padding: '12px 16px', color: '#cdd6f4', fontSize: '14px' }}>{ticket.title}</td>
-                  <td style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '14px' }}>{ticket.asset_name || '—'}</td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <span style={{
-                      fontSize: '12px', padding: '2px 10px', borderRadius: '99px',
-                      backgroundColor: priorityColors[ticket.priority]?.bg,
-                      color: priorityColors[ticket.priority]?.text,
-                    }}>
-                      {ticket.priority}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    {ticket.ai_priority_suggestion ? (
-                      <div>
-                        <span style={{
-                          fontSize: '12px', padding: '2px 10px', borderRadius: '99px',
-                          backgroundColor: priorityColors[ticket.ai_priority_suggestion]?.bg,
-                          color: priorityColors[ticket.ai_priority_suggestion]?.text,
-                        }}>
-                          {ticket.ai_priority_suggestion}
-                        </span>
-                        {ticket.ai_category && (
-                          <div style={{ fontSize: '11px', color: '#a6adc8', marginTop: '4px' }}>
-                            {ticket.ai_category}
-                          </div>
-                        )}
-                        {ticket.ai_recommendation && (
-                          <div style={{ fontSize: '11px', color: '#a6adc8', marginTop: '4px', maxWidth: '200px' }}>
-                            {ticket.ai_recommendation}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <span style={{ color: '#45475a', fontSize: '12px' }}>—</span>
-                    )}
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <span style={{
-                      fontSize: '12px', padding: '2px 10px', borderRadius: '99px',
-                      backgroundColor: statusColors[ticket.status]?.bg,
-                      color: statusColors[ticket.status]?.text,
-                    }}>
-                      {ticket.status.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px 16px', color: '#a6adc8', fontSize: '14px' }}>{ticket.reporter_name || '—'}</td>
-                  <td style={{ padding: '12px 16px' }}>
-                    {['admin', 'technician'].includes(user.role) && (
-                      <select
-                        value={ticket.status}
-                        onChange={(e) => handleStatusUpdate(ticket.id, e.target.value)}
-                        style={{ padding: '4px 8px', backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '6px', color: '#cdd6f4', fontSize: '12px', cursor: 'pointer' }}
-                      >
-                        <option value="open">Open</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="resolved">Resolved</option>
-                        <option value="closed">Closed</option>
-                      </select>
-                    )}
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    {user.role === 'admin' && (
-                      <button
-                        onClick={() => handleDelete(ticket.id)}
-                        style={{ padding: '4px 12px', backgroundColor: '#f38ba820', color: '#f38ba8', border: '1px solid #f38ba8', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
       </div>
     </div>
   );

@@ -7,7 +7,10 @@ const { getAllAssets, getAssetById, createAsset, updateAsset, deleteAsset } = re
 router.get('/', auth, getAllAssets);
 router.get('/types', auth, async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM asset_types ORDER BY name');
+    const result = await pool.query(
+      'SELECT * FROM asset_types WHERE organization_id = $1 ORDER BY name',
+      [req.user.org_id]
+    );
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });

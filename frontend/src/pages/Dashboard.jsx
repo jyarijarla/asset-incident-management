@@ -1,60 +1,114 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
+import PageLoader from '../components/PageLoader';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend
+  PieChart, Pie, Cell,
 } from 'recharts';
 
-const COLORS = {
-  low: '#a6e3a1',
-  medium: '#89b4fa',
-  high: '#fab387',
-  critical: '#f38ba8',
+const PRIORITY_COLORS = { low: '#22c55e', medium: '#3b82f6', high: '#f59e0b', critical: '#ef4444' };
+const PIE_COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#a78bfa'];
+
+const tooltipStyle = {
+  contentStyle: { backgroundColor: '#18181b', border: '1px solid #3f3f46', borderRadius: '10px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' },
+  labelStyle: { color: '#fafafa', fontWeight: 600 },
+  itemStyle: { color: '#a1a1aa' },
 };
 
-const PIE_COLORS = ['#89b4fa', '#a6e3a1', '#fab387', '#f38ba8', '#cba6f7'];
+/* ── Icons ── */
+const BoxIcon = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+    <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
+  </svg>
+);
+const TicketIcon = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+    <path d="M13 5v2M13 17v2M13 11v2" />
+  </svg>
+);
+const ClockIcon = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+const CheckIcon = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
+  </svg>
+);
+const AlertIcon = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+    <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+);
+const ZapIcon = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </svg>
+);
 
-const StatCard = ({ title, value, color, subtitle }) => (
-  <div style={{
-    backgroundColor: '#313244',
-    borderRadius: '12px',
-    padding: '1.5rem',
-    flex: 1,
-    borderLeft: `4px solid ${color}`,
-    minWidth: '150px',
-  }}>
-    <p style={{ color: '#a6adc8', fontSize: '13px', margin: '0 0 8px' }}>{title}</p>
-    <p style={{ color: '#cdd6f4', fontSize: '32px', fontWeight: '600', margin: '0 0 4px' }}>{value}</p>
-    {subtitle && <p style={{ color: '#a6adc8', fontSize: '12px', margin: 0 }}>{subtitle}</p>}
+/* ── Stat Card ── */
+const StatCard = ({ title, value, subtitle, color, icon }) => (
+  <div className="group relative overflow-hidden rounded-2xl border border-[#3f3f46]/60 bg-[#18181b] p-5 transition-all duration-200 hover:border-[#3f3f46] hover:shadow-lg hover:shadow-black/30">
+    <div className="absolute inset-x-0 top-0 h-px" style={{ background: `linear-gradient(90deg, ${color}80, transparent 70%)` }} />
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[#71717a]">{title}</p>
+        <p className="mt-2.5 text-[2.1rem] font-bold leading-none tracking-tight text-[#fafafa]">{value}</p>
+        {subtitle && <p className="mt-2 text-xs text-[#71717a]">{subtitle}</p>}
+      </div>
+      <div className="shrink-0 rounded-xl p-2.5 transition-transform duration-200 group-hover:scale-105" style={{ color, backgroundColor: `${color}18` }}>
+        {icon}
+      </div>
+    </div>
   </div>
 );
 
+/* ── Chart Card ── */
+const ChartCard = ({ title, children, className = '' }) => (
+  <div className={`rounded-2xl border border-[#3f3f46]/60 bg-[#18181b] p-5 ${className}`}>
+    <h2 className="mb-4 text-sm font-semibold text-[#fafafa]">{title}</h2>
+    {children}
+  </div>
+);
+
+const EmptyChart = ({ message }) => (
+  <div className="flex h-[220px] items-center justify-center text-sm text-[#3f3f46]">{message}</div>
+);
+
+/* ── Status badge ── */
+const statusCls = {
+  active: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
+  open: 'text-[#ef4444] bg-[#ef4444]/10 border-[#ef4444]/25',
+  in_progress: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
+  resolved: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
+  closed: 'text-[#a1a1aa] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  under_maintenance: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
+  inactive: 'text-[#a1a1aa] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+};
+const Badge = ({ label }) => (
+  <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusCls[label] || 'text-[#a1a1aa] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
+    {label.replace('_', ' ')}
+  </span>
+);
+
+/* ── Dashboard ── */
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, org } = useAuth();
   const [assets, setAssets] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [assetsRes, ticketsRes, statsRes] = await Promise.all([
-          api.get('/assets'),
-          api.get('/tickets'),
-          api.get('/tickets/stats'),
-        ]);
-        setAssets(assetsRes.data);
-        setTickets(ticketsRes.data);
-        setStats(statsRes.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    Promise.all([api.get('/assets'), api.get('/tickets'), api.get('/tickets/stats')])
+      .then(([a, t, s]) => { setAssets(a.data); setTickets(t.data); setStats(s.data); })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   const openTickets = tickets.filter(t => t.status === 'open').length;
@@ -62,169 +116,122 @@ const Dashboard = () => {
   const resolvedTickets = tickets.filter(t => t.status === 'resolved' || t.status === 'closed').length;
   const criticalTickets = tickets.filter(t => t.priority === 'critical' && t.status === 'open').length;
 
-  if (loading) return <div style={{ padding: '2rem', color: '#cdd6f4' }}>Loading...</div>;
+  if (loading) return <PageLoader variant="dashboard" title="Loading dashboard" subtitle="Pulling in KPIs, charts, and recent activity..." />;
 
   return (
-    <div style={{ padding: '2rem', backgroundColor: '#1e1e2e', minHeight: '100vh' }}>
-      <h1 style={{ color: '#cdd6f4', marginBottom: '0.25rem', fontSize: '22px' }}>
-        Welcome back, {user?.name}
-      </h1>
-      <p style={{ color: '#a6adc8', marginBottom: '2rem', fontSize: '14px' }}>
-        Here's what's happening in your system
-      </p>
+    <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-350 space-y-6">
 
-      {/* KPI Cards */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-        <StatCard title="Total Assets" value={assets.length} color="#89b4fa" />
-        <StatCard title="Open Tickets" value={openTickets} color="#f38ba8" />
-        <StatCard title="In Progress" value={inProgressTickets} color="#fab387" />
-        <StatCard title="Resolved" value={resolvedTickets} color="#a6e3a1" />
-        <StatCard
-          title="Critical Open"
-          value={criticalTickets}
-          color="#f38ba8"
-          subtitle="needs immediate attention"
-        />
-        <StatCard
-          title="Avg Resolution"
-          value={stats?.avgResolutionHours ? `${stats.avgResolutionHours}h` : '—'}
-          color="#cba6f7"
-          subtitle="hours to resolve"
-        />
-      </div>
-
-      {/* Charts Row */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-
-        {/* Ticket Trends Bar Chart */}
-        <div style={{ flex: 2, backgroundColor: '#313244', borderRadius: '12px', padding: '1.5rem', minWidth: '300px' }}>
-          <h2 style={{ color: '#cdd6f4', fontSize: '15px', marginBottom: '1.5rem' }}>Ticket Trends — Last 7 Days</h2>
-          {stats?.trends?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={stats.trends}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#45475a" />
-                <XAxis
-                  dataKey="date"
-                  tick={{ fill: '#a6adc8', fontSize: 12 }}
-                  tickFormatter={(val) => new Date(val).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                />
-                <YAxis tick={{ fill: '#a6adc8', fontSize: 12 }} allowDecimals={false} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '8px' }}
-                  labelStyle={{ color: '#cdd6f4' }}
-                  itemStyle={{ color: '#a6adc8' }}
-                />
-                <Bar dataKey="total" name="Created" fill="#89b4fa" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="resolved" name="Resolved" fill="#a6e3a1" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a6adc8', fontSize: '14px' }}>
-              No ticket data for the last 7 days
-            </div>
-          )}
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-bold text-[#fafafa]">
+            Welcome back, <span className="text-[#3b82f6]">{user?.name?.split(' ')[0]}</span>
+          </h1>
+          <p className="mt-1 text-sm text-[#71717a]">
+            {org?.name && <span className="mr-1.5">{org.name} ·</span>}
+            Here's what's happening across your system
+          </p>
         </div>
 
-        {/* Assets By Type Pie Chart */}
-        <div style={{ flex: 1, backgroundColor: '#313244', borderRadius: '12px', padding: '1.5rem', minWidth: '250px' }}>
-          <h2 style={{ color: '#cdd6f4', fontSize: '15px', marginBottom: '1.5rem' }}>Assets By Type</h2>
-          {stats?.assetsByType?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie
-                  data={stats.assetsByType}
-                  dataKey="count"
-                  nameKey="type"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  label={({ type, percent }) => `${type} ${(percent * 100).toFixed(0)}%`}
-                  labelLine={false}
-                >
-                  {stats.assetsByType.map((_, index) => (
-                    <Cell key={index} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+        {/* Stat Cards */}
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <StatCard title="Total Assets" value={assets.length} color="#3b82f6" icon={<BoxIcon />} />
+          <StatCard title="Open Tickets" value={openTickets} color="#ef4444" icon={<TicketIcon />} />
+          <StatCard title="In Progress" value={inProgressTickets} color="#f59e0b" icon={<ClockIcon />} />
+          <StatCard title="Resolved" value={resolvedTickets} color="#22c55e" icon={<CheckIcon />} />
+          <StatCard title="Critical Open" value={criticalTickets} color="#ef4444" subtitle="needs attention" icon={<AlertIcon />} />
+          <StatCard
+            title="Avg Resolution"
+            value={stats?.avgResolutionHours ? `${stats.avgResolutionHours}h` : '—'}
+            color="#a78bfa"
+            subtitle="hours to close"
+            icon={<ZapIcon />}
+          />
+        </div>
+
+        {/* Charts Row */}
+        <div className="grid gap-4 xl:grid-cols-12">
+          <ChartCard title="Ticket Trends — Last 7 Days" className="xl:col-span-7">
+            {stats?.trends?.length > 0 ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={stats.trends} barGap={4}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#3f3f4650" vertical={false} />
+                  <XAxis dataKey="date" tick={{ fill: '#71717a', fontSize: 11 }} tickLine={false} axisLine={false}
+                    tickFormatter={(v) => new Date(v).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} />
+                  <YAxis tick={{ fill: '#71717a', fontSize: 11 }} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <Tooltip {...tooltipStyle} />
+                  <Bar dataKey="total" name="Created" fill="#3b82f6" radius={[5, 5, 0, 0]} />
+                  <Bar dataKey="resolved" name="Resolved" fill="#22c55e" radius={[5, 5, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : <EmptyChart message="No ticket data for the last 7 days" />}
+          </ChartCard>
+
+          <ChartCard title="Tickets by Priority" className="xl:col-span-5">
+            {stats?.priorityDistribution?.length > 0 ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={stats.priorityDistribution} layout="vertical" barSize={12}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#3f3f4650" horizontal={false} />
+                  <XAxis type="number" tick={{ fill: '#71717a', fontSize: 11 }} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <YAxis dataKey="priority" type="category" tick={{ fill: '#a1a1aa', fontSize: 12 }} tickLine={false} axisLine={false} width={55} />
+                  <Tooltip {...tooltipStyle} />
+                  <Bar dataKey="count" name="Tickets" radius={[0, 5, 5, 0]}>
+                    {stats.priorityDistribution.map((e, i) => <Cell key={i} fill={PRIORITY_COLORS[e.priority] || '#3b82f6'} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : <EmptyChart message="No priority data" />}
+          </ChartCard>
+        </div>
+
+        {/* Bottom Row */}
+        <div className="grid gap-4 xl:grid-cols-12">
+          <ChartCard title="Assets by Type" className="xl:col-span-4">
+            {stats?.assetsByType?.length > 0 ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie data={stats.assetsByType} dataKey="count" nameKey="type" cx="50%" cy="50%" outerRadius={80} innerRadius={40} paddingAngle={3}>
+                    {stats.assetsByType.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip {...tooltipStyle} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : <EmptyChart message="No asset data" />}
+          </ChartCard>
+
+          <div className="grid gap-4 sm:grid-cols-2 xl:col-span-8">
+            <ChartCard title="Recent Assets">
+              {assets.length === 0 ? (
+                <p className="py-4 text-center text-sm text-[#3f3f46]">No assets yet</p>
+              ) : (
+                <div className="divide-y divide-[#3f3f46]/40">
+                  {assets.slice(0, 5).map(asset => (
+                    <div key={asset.id} className="flex items-center justify-between gap-3 py-2.5">
+                      <span className="truncate text-sm text-[#fafafa]">{asset.name}</span>
+                      <Badge label={asset.status} />
+                    </div>
                   ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '8px' }}
-                  itemStyle={{ color: '#a6adc8' }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          ) : (
-            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a6adc8', fontSize: '14px' }}>
-              No asset data
-            </div>
-          )}
-        </div>
+                </div>
+              )}
+            </ChartCard>
 
-        {/* Priority Distribution */}
-        <div style={{ flex: 1, backgroundColor: '#313244', borderRadius: '12px', padding: '1.5rem', minWidth: '250px' }}>
-          <h2 style={{ color: '#cdd6f4', fontSize: '15px', marginBottom: '1.5rem' }}>Tickets By Priority</h2>
-          {stats?.priorityDistribution?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={stats.priorityDistribution} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#45475a" />
-                <XAxis type="number" tick={{ fill: '#a6adc8', fontSize: 12 }} allowDecimals={false} />
-                <YAxis dataKey="priority" type="category" tick={{ fill: '#a6adc8', fontSize: 12 }} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#1e1e2e', border: '1px solid #45475a', borderRadius: '8px' }}
-                  itemStyle={{ color: '#a6adc8' }}
-                />
-                <Bar dataKey="count" name="Tickets" radius={[0, 4, 4, 0]}>
-                  {stats.priorityDistribution.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[entry.priority] || '#89b4fa'} />
+            <ChartCard title="Recent Tickets">
+              {tickets.length === 0 ? (
+                <p className="py-4 text-center text-sm text-[#3f3f46]">No tickets yet</p>
+              ) : (
+                <div className="divide-y divide-[#3f3f46]/40">
+                  {tickets.slice(0, 5).map(ticket => (
+                    <div key={ticket.id} className="flex items-center justify-between gap-3 py-2.5">
+                      <span className="truncate text-sm text-[#fafafa]">{ticket.title}</span>
+                      <Badge label={ticket.status} />
+                    </div>
                   ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a6adc8', fontSize: '14px' }}>
-              No priority data
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, backgroundColor: '#313244', borderRadius: '12px', padding: '1.5rem', minWidth: '300px' }}>
-          <h2 style={{ color: '#cdd6f4', fontSize: '15px', marginBottom: '1rem' }}>Recent Assets</h2>
-          {assets.slice(0, 5).map(asset => (
-            <div key={asset.id} style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '10px 0', borderBottom: '1px solid #45475a',
-            }}>
-              <span style={{ color: '#cdd6f4', fontSize: '14px' }}>{asset.name}</span>
-              <span style={{
-                fontSize: '12px', padding: '2px 10px', borderRadius: '99px',
-                backgroundColor: asset.status === 'active' ? '#a6e3a120' : asset.status === 'under_maintenance' ? '#fab38720' : '#45475a',
-                color: asset.status === 'active' ? '#a6e3a1' : asset.status === 'under_maintenance' ? '#fab387' : '#a6adc8',
-              }}>
-                {asset.status.replace('_', ' ')}
-              </span>
-            </div>
-          ))}
+                </div>
+              )}
+            </ChartCard>
+          </div>
         </div>
 
-        <div style={{ flex: 1, backgroundColor: '#313244', borderRadius: '12px', padding: '1.5rem', minWidth: '300px' }}>
-          <h2 style={{ color: '#cdd6f4', fontSize: '15px', marginBottom: '1rem' }}>Recent Tickets</h2>
-          {tickets.slice(0, 5).map(ticket => (
-            <div key={ticket.id} style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '10px 0', borderBottom: '1px solid #45475a',
-            }}>
-              <span style={{ color: '#cdd6f4', fontSize: '14px', flex: 1, marginRight: '1rem' }}>{ticket.title}</span>
-              <span style={{
-                fontSize: '12px', padding: '2px 10px', borderRadius: '99px', whiteSpace: 'nowrap',
-                backgroundColor: ticket.status === 'open' ? '#f38ba820' : ticket.status === 'in_progress' ? '#fab38720' : ticket.status === 'resolved' ? '#a6e3a120' : '#45475a',
-                color: ticket.status === 'open' ? '#f38ba8' : ticket.status === 'in_progress' ? '#fab387' : ticket.status === 'resolved' ? '#a6e3a1' : '#a6adc8',
-              }}>
-                {ticket.status.replace('_', ' ')}
-              </span>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
