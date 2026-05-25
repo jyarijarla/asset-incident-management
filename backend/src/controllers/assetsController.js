@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+﻿const pool = require('../config/db');
 
 const getAllAssets = async (req, res) => {
   try {

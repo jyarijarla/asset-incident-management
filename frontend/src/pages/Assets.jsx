@@ -5,15 +5,15 @@ import PageLoader from '../components/PageLoader';
 
 const STATUS_CLASSES = {
   active: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
-  inactive: 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  inactive: 'text-[#a89880] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
   under_maintenance: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
 };
 
-const inputCls = 'w-full rounded-xl border border-[#cac5bf] bg-white px-3.5 py-2.5 text-sm text-[#1c1917] placeholder:text-[#78716c] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
-const labelCls = 'mb-1.5 block text-xs font-medium text-[#44403c]';
+const inputCls = 'w-full rounded-xl border border-[#3a3530] bg-[#252220] px-3.5 py-2.5 text-sm text-[#f5f0e8] placeholder:text-[#6b5f50] outline-none transition focus:border-[#f59e0b]/60 focus:ring-2 focus:ring-[#f59e0b]/20 box-border';
+const labelCls = 'mb-1.5 block text-xs font-medium text-[#a89880]';
 
 const SearchIcon = () => (
-  <svg className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716c]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6b5f50]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
   </svg>
 );
@@ -82,21 +82,19 @@ const Assets = () => {
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-350 space-y-5">
 
-        {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#1c1917]">Assets</h1>
-            <p className="mt-0.5 text-sm text-[#57534e]">{filtered.length} of {assets.length} assets</p>
+            <h1 className="text-2xl font-bold text-[#f5f0e8]">Assets</h1>
+            <p className="mt-0.5 text-sm text-[#8a7965]">{filtered.length} of {assets.length} assets</p>
           </div>
           {user.role === 'admin' && (
             <button onClick={() => setShowForm(v => !v)}
-              className="rounded-xl bg-[#3b82f6] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2563eb] active:scale-95">
+              className="rounded-xl bg-[#f59e0b] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#d97706] active:scale-95">
               {showForm ? 'Cancel' : '+ New Asset'}
             </button>
           )}
         </div>
 
-        {/* Filters */}
         <div className="flex flex-wrap gap-2.5">
           <div className="relative min-w-50 flex-2">
             <SearchIcon />
@@ -117,16 +115,15 @@ const Assets = () => {
           </select>
           {hasFilters && (
             <button onClick={() => { setSearch(''); setFilterStatus(''); setFilterType(''); setCurrentPage(1); }}
-              className="rounded-xl border border-[#cac5bf] bg-transparent px-4 py-2.5 text-sm text-[#44403c] transition hover:bg-[#dedad4] hover:text-[#1c1917]">
+              className="rounded-xl border border-[#3a3530] bg-transparent px-4 py-2.5 text-sm text-[#a89880] transition hover:bg-[#252220] hover:text-[#f5f0e8]">
               Clear
             </button>
           )}
         </div>
 
-        {/* Create Form */}
         {showForm && (
-          <div className="rounded-2xl border border-[#cac5bf] bg-white p-6">
-            <h2 className="mb-4 text-sm font-semibold text-[#1c1917]">New Asset</h2>
+          <div className="rounded-2xl border border-[#3a3530] bg-[#1c1a17] p-6">
+            <h2 className="mb-4 text-sm font-semibold text-[#f5f0e8]">New Asset</h2>
             {error && (
               <div className="mb-4 rounded-xl border border-[#ef4444]/30 bg-[#ef4444]/10 px-4 py-2.5 text-sm text-[#ef4444]">{error}</div>
             )}
@@ -166,36 +163,35 @@ const Assets = () => {
           </div>
         )}
 
-        {/* Table */}
-        <div className="overflow-hidden rounded-2xl border border-[#cac5bf] bg-white">
+        <div className="overflow-hidden rounded-2xl border border-[#3a3530] bg-[#1c1a17]">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
               <thead>
-                <tr className="border-b border-[#cac5bf]">
+                <tr className="border-b border-[#3a3530]">
                   {['Name', 'Type', 'Serial Number', 'Status', 'Location', 'Assigned To', 'Actions'].map(h => (
-                    <th key={h} className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#57534e]">{h}</th>
+                    <th key={h} className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-widest text-[#8a7965]">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#dedad4]">
+              <tbody className="divide-y divide-[#252220]">
                 {paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-5 py-12 text-center text-sm text-[#78716c]">
+                    <td colSpan={7} className="px-5 py-12 text-center text-sm text-[#6b5f50]">
                       {assets.length === 0 ? 'No assets yet — create your first one above.' : 'No assets match your filters.'}
                     </td>
                   </tr>
                 ) : paginated.map(asset => (
-                  <tr key={asset.id} className="transition-colors hover:bg-white/[0.03]">
-                    <td className="px-5 py-3.5 font-medium text-[#1c1917]">{asset.name}</td>
-                    <td className="px-5 py-3.5 text-[#44403c]">{asset.asset_type || '—'}</td>
-                    <td className="px-5 py-3.5 font-mono text-xs text-[#44403c]">{asset.serial_number}</td>
+                  <tr key={asset.id} className="transition-colors hover:bg-[#1c1a17]/[0.03]">
+                    <td className="px-5 py-3.5 font-medium text-[#f5f0e8]">{asset.name}</td>
+                    <td className="px-5 py-3.5 text-[#a89880]">{asset.asset_type || '—'}</td>
+                    <td className="px-5 py-3.5 font-mono text-xs text-[#a89880]">{asset.serial_number}</td>
                     <td className="px-5 py-3.5">
-                      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${STATUS_CLASSES[asset.status] || 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
+                      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${STATUS_CLASSES[asset.status] || 'text-[#a89880] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
                         {asset.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-[#44403c]">{asset.location || '—'}</td>
-                    <td className="px-5 py-3.5 text-[#44403c]">{asset.assigned_to || '—'}</td>
+                    <td className="px-5 py-3.5 text-[#a89880]">{asset.location || '—'}</td>
+                    <td className="px-5 py-3.5 text-[#a89880]">{asset.assigned_to || '—'}</td>
                     <td className="px-5 py-3.5">
                       {user.role === 'admin' && (
                         <button onClick={() => handleDelete(asset.id)}
@@ -211,15 +207,15 @@ const Assets = () => {
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-[#cac5bf] px-5 py-3.5">
-              <span className="text-xs text-[#57534e]">Page {currentPage} of {totalPages} · {filtered.length} results</span>
+            <div className="flex items-center justify-between border-t border-[#3a3530] px-5 py-3.5">
+              <span className="text-xs text-[#8a7965]">Page {currentPage} of {totalPages} · {filtered.length} results</span>
               <div className="flex gap-2">
                 <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
-                  className="rounded-lg border border-[#cac5bf] bg-transparent px-3 py-1.5 text-xs font-medium text-[#44403c] transition enabled:hover:bg-[#cac5bf] disabled:opacity-40">
+                  className="rounded-lg border border-[#3a3530] bg-transparent px-3 py-1.5 text-xs font-medium text-[#a89880] transition enabled:hover:bg-[#3a3530] disabled:opacity-40">
                   Previous
                 </button>
                 <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
-                  className="rounded-lg bg-[#3b82f6] px-3 py-1.5 text-xs font-medium text-white transition enabled:hover:bg-[#2563eb] disabled:opacity-40">
+                  className="rounded-lg bg-[#f59e0b] px-3 py-1.5 text-xs font-medium text-white transition enabled:hover:bg-[#d97706] disabled:opacity-40">
                   Next
                 </button>
               </div>

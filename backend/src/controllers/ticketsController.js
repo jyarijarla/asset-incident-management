@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+﻿const pool = require('../config/db');
 
 const getAllTickets = async (req, res) => {
   try {

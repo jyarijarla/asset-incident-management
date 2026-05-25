@@ -1,25 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #e5e0da;
-  --card: #f7f4f0;
-  --card-surface: #dedad4;
-  --border: #cac5bf;
-  --border-muted: #dedad4;
-  --text: #1c1917;
-  --text-muted: #44403c;
-  --text-dim: #78716c;
-  --blue: #3b82f6;
-  --blue-bright: #2563eb;
-  --green: #22c55e;
+  --bg: #0f0e0c;
+  --card: #1c1a17;
+  --card-surface: #252220;
+  --border: #3a3530;
+  --border-muted: #252220;
+  --text: #f5f0e8;
+  --text-muted: #a89880;
+  --text-dim: #6b5f50;
   --amber: #f59e0b;
+  --amber-bright: #d97706;
+  --green: #22c55e;
+  --blue: #38bdf8;
   --red: #ef4444;
   --purple: #a78bfa;
 }
 
 @layer base {
   * {
-    border-color: rgb(202 197 191 / 0.8);
+    border-color: rgb(58 53 48 / 0.8);
     box-sizing: border-box;
   }
 
@@ -38,9 +38,9 @@
 
     background-color: var(--bg);
     background-image:
-      radial-gradient(ellipse 80% 60% at 10% -5%, rgb(59 130 246 / 0.07), transparent),
-      radial-gradient(ellipse 60% 50% at 90% 5%, rgb(99 102 241 / 0.05), transparent),
-      radial-gradient(circle, rgb(0 0 0 / 0.045) 1px, transparent 1px);
+      radial-gradient(ellipse 80% 60% at 10% -5%, rgb(245 158 11 / 0.07), transparent),
+      radial-gradient(ellipse 60% 50% at 90% 5%, rgb(251 191 36 / 0.04), transparent),
+      radial-gradient(circle, rgb(255 255 255 / 0.022) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 28px 28px;
     background-attachment: fixed, fixed, fixed, fixed;
   }
@@ -53,7 +53,7 @@
   }
 
   ::selection {
-    background: rgb(59 130 246 / 0.18);
+    background: rgb(245 158 11 / 0.28);
     color: var(--text);
   }
 
@@ -61,7 +61,7 @@
     outline: none;
   }
   :focus-visible {
-    outline: 2px solid rgb(59 130 246 / 0.5);
+    outline: 2px solid rgb(245 158 11 / 0.6);
     outline-offset: 2px;
   }
 
@@ -73,28 +73,29 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #bab5af;
+    background: #3a3530;
     border-radius: 999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #78716c;
+    background: #6b5f50;
   }
 }
 
 @layer utilities {
   .btn-primary {
-    background-image: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    box-shadow: 0 1px 8px rgb(59 130 246 / 0.3), inset 0 1px 0 rgb(255 255 255 / 0.15);
+    background-image: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    box-shadow: 0 1px 8px rgb(245 158 11 / 0.35), inset 0 1px 0 rgb(255 255 255 / 0.12);
     transition: all 0.15s ease-out;
+    color: #1c1a17;
   }
   .btn-primary:hover {
-    background-image: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-    box-shadow: 0 2px 16px rgb(59 130 246 / 0.4), inset 0 1px 0 rgb(255 255 255 / 0.2);
+    background-image: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    box-shadow: 0 2px 16px rgb(245 158 11 / 0.45), inset 0 1px 0 rgb(255 255 255 / 0.16);
     transform: translateY(-1px);
   }
   .btn-primary:active {
     transform: scale(0.97);
-    box-shadow: 0 1px 4px rgb(59 130 246 / 0.2);
+    box-shadow: 0 1px 4px rgb(245 158 11 / 0.25);
   }
   .btn-primary:disabled {
     opacity: 0.5;
@@ -103,15 +104,15 @@
   }
 
   .card-glass {
-    background: rgb(247 244 240 / 0.95);
+    background: rgb(37 34 32 / 0.96);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgb(0 0 0 / 0.09);
-    box-shadow: 0 4px 24px rgb(0 0 0 / 0.08), 0 1px 0 rgb(255 255 255 / 0.8);
+    border: 1px solid rgb(255 255 255 / 0.07);
+    box-shadow: 0 4px 32px rgb(0 0 0 / 0.45), 0 1px 0 rgb(255 255 255 / 0.04);
   }
 
   .icon-glow {
-    box-shadow: 0 0 0 1px rgb(59 130 246 / 0.2), 0 0 16px rgb(59 130 246 / 0.12);
+    box-shadow: 0 0 0 1px rgb(245 158 11 / 0.25), 0 0 16px rgb(245 158 11 / 0.14);
   }
 }
 

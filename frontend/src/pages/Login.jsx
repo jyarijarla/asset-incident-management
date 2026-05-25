@@ -29,7 +29,7 @@ const Spinner = () => (
   </svg>
 );
 
-const inputCls = 'w-full rounded-xl border border-[#cac5bf] bg-white px-4 py-3 text-sm text-[#1c1917] placeholder:text-[#78716c] outline-none transition-all duration-150 focus:border-[#3b82f6]/50 focus:ring-2 focus:ring-[#3b82f6]/15 focus:bg-white';
+const inputCls = 'w-full rounded-xl border border-[#3a3530] bg-[#252220] px-4 py-3 text-sm text-[#f5f0e8] placeholder:text-[#6b5f50] outline-none transition-all duration-150 focus:border-[#f59e0b]/50 focus:ring-2 focus:ring-[#f59e0b]/15 focus:bg-[#252220]';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -37,9 +37,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // forgot flow: 'email' → verify account exists → 'reset' → set new password → 'done'
   const [mode, setMode] = useState('login');
-  const [forgotStep, setForgotStep] = useState('email'); // 'email' | 'reset' | 'done'
+  const [forgotStep, setForgotStep] = useState('email');
   const [resetEmail, setResetEmail] = useState('');
   const [resetName, setResetName] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -65,7 +64,6 @@ const Login = () => {
     }
   };
 
-  // Step 1: verify the email exists
   const handleVerifyEmail = async (e) => {
     e.preventDefault();
     setResetLoading(true);
@@ -81,7 +79,6 @@ const Login = () => {
     }
   };
 
-  // Step 2: set the new password
   const handleResetPassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) return setResetError('Passwords do not match');
@@ -120,20 +117,19 @@ const Login = () => {
   return (
     <div className="flex min-h-screen">
 
-      {/* ── Left brand panel (desktop only) ── */}
-      <div className="hidden lg:flex w-[420px] shrink-0 flex-col justify-between p-12 border-r border-[#cac5bf]"
-        style={{ background: 'linear-gradient(160deg, rgb(59 130 246 / 0.09) 0%, rgb(99 102 241 / 0.05) 55%, transparent 80%), #dedad4' }}>
+      <div className="hidden lg:flex w-[420px] shrink-0 flex-col justify-between p-12 border-r border-[#3a3530]"
+        style={{ background: 'linear-gradient(160deg, rgb(245 158 11 / 0.10) 0%, rgb(251 191 36 / 0.05) 55%, transparent 80%), #1c1a17' }}>
 
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/20 icon-glow text-[#3b82f6]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#f59e0b]/10 border border-[#f59e0b]/20 icon-glow text-[#f59e0b]">
             <BoxIcon />
           </div>
-          <span className="text-sm font-bold tracking-tight text-[#1c1917]">AssetFlow</span>
+          <span className="text-sm font-bold tracking-tight text-[#f5f0e8]">AssetFlow</span>
         </div>
 
         <div>
-          <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-[#3b82f6]/50">Operations Platform</p>
-          <h2 className="text-[1.85rem] font-bold leading-[1.2] tracking-tight text-[#1c1917]">
+          <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-[#f59e0b]/50">Operations Platform</p>
+          <h2 className="text-[1.85rem] font-bold leading-[1.2] tracking-tight text-[#f5f0e8]">
             Everything your team needs to stay operational.
           </h2>
           <ul className="mt-8 space-y-4">
@@ -142,16 +138,15 @@ const Login = () => {
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/20">
                   <CheckIcon />
                 </span>
-                <span className="text-sm leading-relaxed text-[#57534e]">{f.text}</span>
+                <span className="text-sm leading-relaxed text-[#8a7965]">{f.text}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="text-[11px] text-[#78716c]">Powered by Claude AI · Enterprise ready</p>
+        <p className="text-[11px] text-[#6b5f50]">Powered by Claude AI · Enterprise ready</p>
       </div>
 
-      {/* ── Right form panel ── */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm animate-fade-up">
 
@@ -159,13 +154,13 @@ const Login = () => {
             <>
               <div className="mb-8">
                 <div className="mb-5 flex items-center gap-2 lg:hidden">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#3b82f6]/10 border border-[#3b82f6]/20 text-[#3b82f6]">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#f59e0b]/10 border border-[#f59e0b]/20 text-[#f59e0b]">
                     <BoxIcon />
                   </div>
-                  <span className="text-sm font-bold text-[#1c1917]">AssetFlow</span>
+                  <span className="text-sm font-bold text-[#f5f0e8]">AssetFlow</span>
                 </div>
-                <h1 className="text-2xl font-bold tracking-tight text-[#1c1917]">Welcome back</h1>
-                <p className="mt-1.5 text-sm text-[#57534e]">Sign in to your organization</p>
+                <h1 className="text-2xl font-bold tracking-tight text-[#f5f0e8]">Welcome back</h1>
+                <p className="mt-1.5 text-sm text-[#8a7965]">Sign in to your organization</p>
               </div>
 
               <div className="card-glass rounded-2xl p-7">
@@ -180,15 +175,15 @@ const Login = () => {
 
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-xs font-medium text-[#44403c]">Email</label>
+                    <label className="mb-1.5 block text-xs font-medium text-[#a89880]">Email</label>
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                       className={inputCls} placeholder="you@company.com" required autoComplete="email" />
                   </div>
                   <div>
                     <div className="mb-1.5 flex items-center justify-between">
-                      <label className="text-xs font-medium text-[#44403c]">Password</label>
+                      <label className="text-xs font-medium text-[#a89880]">Password</label>
                       <button type="button" onClick={switchToForgot}
-                        className="text-[11px] text-[#78716c] transition-colors hover:text-[#3b82f6]">
+                        className="text-[11px] text-[#6b5f50] transition-colors hover:text-[#f59e0b]">
                         Forgot password?
                       </button>
                     </div>
@@ -204,56 +199,54 @@ const Login = () => {
               </div>
 
               <div className="mt-6 space-y-2 text-center">
-                <p className="text-sm text-[#78716c]">
+                <p className="text-sm text-[#6b5f50]">
                   New here?{' '}
-                  <Link to="/register" className="font-medium text-[#3b82f6] transition-colors hover:text-[#60a5fa]">
+                  <Link to="/register" className="font-medium text-[#f59e0b] transition-colors hover:text-[#fbbf24]">
                     Create an organization
                   </Link>
                 </p>
                 <p>
-                  <Link to="/" className="text-sm text-[#78716c] transition-colors hover:text-[#57534e]">← Back to home</Link>
+                  <Link to="/" className="text-sm text-[#6b5f50] transition-colors hover:text-[#8a7965]">← Back to home</Link>
                 </p>
               </div>
             </>
           ) : (
-            /* ── Forgot password (3 steps) ── */
             <>
               <div className="mb-8">
                 <button type="button" onClick={switchToLogin}
-                  className="mb-6 flex items-center gap-1.5 text-sm text-[#78716c] transition-colors hover:text-[#44403c]">
+                  className="mb-6 flex items-center gap-1.5 text-sm text-[#6b5f50] transition-colors hover:text-[#a89880]">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="m15 18-6-6 6-6" />
                   </svg>
                   Back to sign in
                 </button>
-                <h1 className="text-2xl font-bold tracking-tight text-[#1c1917]">
+                <h1 className="text-2xl font-bold tracking-tight text-[#f5f0e8]">
                   {forgotStep === 'email' ? 'Find your account' :
                    forgotStep === 'reset' ? 'Set a new password' :
                    'Password updated'}
                 </h1>
-                <p className="mt-1.5 text-sm text-[#57534e]">
+                <p className="mt-1.5 text-sm text-[#8a7965]">
                   {forgotStep === 'email' && 'Enter your email to verify your account.'}
                   {forgotStep === 'reset' && `Verified as ${resetName}. Choose a new password.`}
                 </p>
               </div>
 
               <div className="card-glass rounded-2xl p-7">
-                {/* Step indicator */}
                 {forgotStep !== 'done' && (
                   <div className="mb-6 flex items-center gap-2">
                     {['email', 'reset'].map((s, i) => (
                       <div key={s} className="flex items-center gap-2">
                         <div className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold transition-colors ${
-                          forgotStep === s ? 'bg-[#3b82f6] text-white' :
+                          forgotStep === s ? 'bg-[#f59e0b] text-white' :
                           (i === 0 && forgotStep === 'reset') ? 'bg-[#22c55e]/20 text-[#22c55e] border border-[#22c55e]/30' :
-                          'bg-[#dedad4] text-[#78716c]'
+                          'bg-[#252220] text-[#6b5f50]'
                         }`}>
                           {i === 0 && forgotStep === 'reset' ? '✓' : i + 1}
                         </div>
-                        <span className={`text-xs ${forgotStep === s ? 'text-[#44403c]' : 'text-[#78716c]'}`}>
+                        <span className={`text-xs ${forgotStep === s ? 'text-[#a89880]' : 'text-[#6b5f50]'}`}>
                           {s === 'email' ? 'Verify' : 'Reset'}
                         </span>
-                        {i === 0 && <div className="h-px w-6 bg-[#dedad4]" />}
+                        {i === 0 && <div className="h-px w-6 bg-[#252220]" />}
                       </div>
                     ))}
                   </div>
@@ -271,7 +264,7 @@ const Login = () => {
                 {forgotStep === 'email' && (
                   <form onSubmit={handleVerifyEmail} className="space-y-4">
                     <div>
-                      <label className="mb-1.5 block text-xs font-medium text-[#44403c]">Email address</label>
+                      <label className="mb-1.5 block text-xs font-medium text-[#a89880]">Email address</label>
                       <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)}
                         className={inputCls} placeholder="you@company.com" required autoComplete="email" />
                     </div>
@@ -284,19 +277,19 @@ const Login = () => {
 
                 {forgotStep === 'reset' && (
                   <form onSubmit={handleResetPassword} className="space-y-4">
-                    <div className="flex items-center gap-2.5 rounded-xl border border-[#cac5bf] bg-white px-4 py-3">
+                    <div className="flex items-center gap-2.5 rounded-xl border border-[#3a3530] bg-[#1c1a17] px-4 py-3">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
-                      <span className="text-sm text-[#57534e]">{resetEmail}</span>
+                      <span className="text-sm text-[#8a7965]">{resetEmail}</span>
                     </div>
                     <div>
-                      <label className="mb-1.5 block text-xs font-medium text-[#44403c]">New password</label>
+                      <label className="mb-1.5 block text-xs font-medium text-[#a89880]">New password</label>
                       <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
                         className={inputCls} placeholder="••••••••" required autoComplete="new-password" />
                     </div>
                     <div>
-                      <label className="mb-1.5 block text-xs font-medium text-[#44403c]">Confirm password</label>
+                      <label className="mb-1.5 block text-xs font-medium text-[#a89880]">Confirm password</label>
                       <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
                         className={inputCls} placeholder="••••••••" required autoComplete="new-password" />
                     </div>
@@ -315,8 +308,8 @@ const Login = () => {
                       </svg>
                     </div>
                     <div>
-                      <p className="font-semibold text-[#1c1917]">Password updated</p>
-                      <p className="mt-2 text-sm text-[#57534e]">You can now sign in with your new password.</p>
+                      <p className="font-semibold text-[#f5f0e8]">Password updated</p>
+                      <p className="mt-2 text-sm text-[#8a7965]">You can now sign in with your new password.</p>
                     </div>
                     <button type="button" onClick={switchToLogin}
                       className="btn-primary w-full rounded-xl py-3 text-sm font-semibold text-white">

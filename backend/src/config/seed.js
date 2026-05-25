@@ -1,10 +1,9 @@
-const pool = require('./db');
+﻿const pool = require('./db');
 
 const seed = async () => {
   try {
     console.log('Seeding database...');
 
-    // Roles
     await pool.query(`
       INSERT INTO roles (name, permissions) VALUES
       ('admin', '{"can_manage_users": true, "can_manage_assets": true, "can_manage_tickets": true, "can_view_reports": true}'),
@@ -14,7 +13,6 @@ const seed = async () => {
     `);
     console.log('Roles seeded');
 
-    // Asset types
     await pool.query(`
       INSERT INTO asset_types (name, description) VALUES
       ('Laptop', 'Portable computers'),

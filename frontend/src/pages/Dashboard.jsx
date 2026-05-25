@@ -7,16 +7,15 @@ import {
   PieChart, Pie, Cell,
 } from 'recharts';
 
-const PRIORITY_COLORS = { low: '#22c55e', medium: '#3b82f6', high: '#f59e0b', critical: '#ef4444' };
-const PIE_COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#a78bfa'];
+const PRIORITY_COLORS = { low: '#22c55e', medium: '#38bdf8', high: '#f59e0b', critical: '#ef4444' };
+const PIE_COLORS = ['#f59e0b', '#22c55e', '#38bdf8', '#ef4444', '#a78bfa'];
 
 const tooltipStyle = {
-  contentStyle: { backgroundColor: '#f7f4f0', border: '1px solid #cac5bf', borderRadius: '10px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' },
-  labelStyle: { color: '#1c1917', fontWeight: 600 },
-  itemStyle: { color: '#44403c' },
+  contentStyle: { backgroundColor: '#252220', border: '1px solid #3a3530', borderRadius: '10px', boxShadow: '0 4px 24px rgba(0,0,0,0.5)' },
+  labelStyle: { color: '#f5f0e8', fontWeight: 600 },
+  itemStyle: { color: '#a89880' },
 };
 
-/* ── Icons ── */
 const BoxIcon = () => (
   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
@@ -51,15 +50,14 @@ const ZapIcon = () => (
   </svg>
 );
 
-/* ── Stat Card ── */
 const StatCard = ({ title, value, subtitle, color, icon }) => (
-  <div className="group relative overflow-hidden rounded-2xl border border-[#cac5bf] bg-white p-5 transition-all duration-200 hover:border-[#bab5af] hover:shadow-lg hover:shadow-black/8">
+  <div className="group relative overflow-hidden rounded-2xl border border-[#3a3530] bg-[#1c1a17] p-5 transition-all duration-200 hover:border-[#2e2b27] hover:shadow-lg hover:shadow-black/8">
     <div className="absolute inset-x-0 top-0 h-px" style={{ background: `linear-gradient(90deg, ${color}80, transparent 70%)` }} />
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-[#57534e]">{title}</p>
-        <p className="mt-2.5 text-[2.1rem] font-bold leading-none tracking-tight text-[#1c1917]">{value}</p>
-        {subtitle && <p className="mt-2 text-xs text-[#57534e]">{subtitle}</p>}
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[#8a7965]">{title}</p>
+        <p className="mt-2.5 text-[2.1rem] font-bold leading-none tracking-tight text-[#f5f0e8]">{value}</p>
+        {subtitle && <p className="mt-2 text-xs text-[#8a7965]">{subtitle}</p>}
       </div>
       <div className="shrink-0 rounded-xl p-2.5 transition-transform duration-200 group-hover:scale-105" style={{ color, backgroundColor: `${color}18` }}>
         {icon}
@@ -68,35 +66,32 @@ const StatCard = ({ title, value, subtitle, color, icon }) => (
   </div>
 );
 
-/* ── Chart Card ── */
 const ChartCard = ({ title, children, className = '' }) => (
-  <div className={`rounded-2xl border border-[#cac5bf] bg-white p-5 ${className}`}>
-    <h2 className="mb-4 text-sm font-semibold text-[#1c1917]">{title}</h2>
+  <div className={`rounded-2xl border border-[#3a3530] bg-[#1c1a17] p-5 ${className}`}>
+    <h2 className="mb-4 text-sm font-semibold text-[#f5f0e8]">{title}</h2>
     {children}
   </div>
 );
 
 const EmptyChart = ({ message }) => (
-  <div className="flex h-[220px] items-center justify-center text-sm text-[#78716c]">{message}</div>
+  <div className="flex h-[220px] items-center justify-center text-sm text-[#6b5f50]">{message}</div>
 );
 
-/* ── Status badge ── */
 const statusCls = {
   active: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
   open: 'text-[#ef4444] bg-[#ef4444]/10 border-[#ef4444]/25',
   in_progress: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
   resolved: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/25',
-  closed: 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  closed: 'text-[#a89880] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
   under_maintenance: 'text-[#f59e0b] bg-[#f59e0b]/10 border-[#f59e0b]/25',
-  inactive: 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
+  inactive: 'text-[#a89880] bg-[#a1a1aa]/10 border-[#a1a1aa]/25',
 };
 const Badge = ({ label }) => (
-  <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusCls[label] || 'text-[#44403c] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
+  <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusCls[label] || 'text-[#a89880] bg-[#a1a1aa]/10 border-[#a1a1aa]/25'}`}>
     {label.replace('_', ' ')}
   </span>
 );
 
-/* ── Dashboard ── */
 const Dashboard = () => {
   const { user, org } = useAuth();
   const [assets, setAssets] = useState([]);
@@ -122,20 +117,18 @@ const Dashboard = () => {
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-350 space-y-6">
 
-        {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-[#1c1917]">
-            Welcome back, <span className="text-[#3b82f6]">{user?.name?.split(' ')[0]}</span>
+          <h1 className="text-2xl font-bold text-[#f5f0e8]">
+            Welcome back, <span className="text-[#f59e0b]">{user?.name?.split(' ')[0]}</span>
           </h1>
-          <p className="mt-1 text-sm text-[#57534e]">
+          <p className="mt-1 text-sm text-[#8a7965]">
             {org?.name && <span className="mr-1.5">{org.name} ·</span>}
             Here's what's happening across your system
           </p>
         </div>
 
-        {/* Stat Cards */}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          <StatCard title="Total Assets" value={assets.length} color="#3b82f6" icon={<BoxIcon />} />
+          <StatCard title="Total Assets" value={assets.length} color="#f59e0b" icon={<BoxIcon />} />
           <StatCard title="Open Tickets" value={openTickets} color="#ef4444" icon={<TicketIcon />} />
           <StatCard title="In Progress" value={inProgressTickets} color="#f59e0b" icon={<ClockIcon />} />
           <StatCard title="Resolved" value={resolvedTickets} color="#22c55e" icon={<CheckIcon />} />
@@ -149,18 +142,17 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Charts Row */}
         <div className="grid gap-4 xl:grid-cols-12">
           <ChartCard title="Ticket Trends — Last 7 Days" className="xl:col-span-7">
             {stats?.trends?.length > 0 ? (
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={stats.trends} barGap={4}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" vertical={false} />
-                  <XAxis dataKey="date" tick={{ fill: '#78716c', fontSize: 11 }} tickLine={false} axisLine={false}
+                  <CartesianGrid strokeDasharray="3 3" stroke="#3a3530" vertical={false} />
+                  <XAxis dataKey="date" tick={{ fill: '#8a7965', fontSize: 11 }} tickLine={false} axisLine={false}
                     tickFormatter={(v) => new Date(v).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} />
-                  <YAxis tick={{ fill: '#78716c', fontSize: 11 }} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <YAxis tick={{ fill: '#8a7965', fontSize: 11 }} tickLine={false} axisLine={false} allowDecimals={false} />
                   <Tooltip {...tooltipStyle} />
-                  <Bar dataKey="total" name="Created" fill="#3b82f6" radius={[5, 5, 0, 0]} />
+                  <Bar dataKey="total" name="Created" fill="#f59e0b" radius={[5, 5, 0, 0]} />
                   <Bar dataKey="resolved" name="Resolved" fill="#22c55e" radius={[5, 5, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -171,12 +163,12 @@ const Dashboard = () => {
             {stats?.priorityDistribution?.length > 0 ? (
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={stats.priorityDistribution} layout="vertical" barSize={12}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" horizontal={false} />
-                  <XAxis type="number" tick={{ fill: '#78716c', fontSize: 11 }} tickLine={false} axisLine={false} allowDecimals={false} />
-                  <YAxis dataKey="priority" type="category" tick={{ fill: '#57534e', fontSize: 12 }} tickLine={false} axisLine={false} width={55} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#3a3530" horizontal={false} />
+                  <XAxis type="number" tick={{ fill: '#8a7965', fontSize: 11 }} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <YAxis dataKey="priority" type="category" tick={{ fill: '#8a7965', fontSize: 12 }} tickLine={false} axisLine={false} width={55} />
                   <Tooltip {...tooltipStyle} />
                   <Bar dataKey="count" name="Tickets" radius={[0, 5, 5, 0]}>
-                    {stats.priorityDistribution.map((e, i) => <Cell key={i} fill={PRIORITY_COLORS[e.priority] || '#3b82f6'} />)}
+                    {stats.priorityDistribution.map((e, i) => <Cell key={i} fill={PRIORITY_COLORS[e.priority] || '#f59e0b'} />)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -184,7 +176,6 @@ const Dashboard = () => {
           </ChartCard>
         </div>
 
-        {/* Bottom Row */}
         <div className="grid gap-4 xl:grid-cols-12">
           <ChartCard title="Assets by Type" className="xl:col-span-4">
             {stats?.assetsByType?.length > 0 ? (
@@ -202,12 +193,12 @@ const Dashboard = () => {
           <div className="grid gap-4 sm:grid-cols-2 xl:col-span-8">
             <ChartCard title="Recent Assets">
               {assets.length === 0 ? (
-                <p className="py-4 text-center text-sm text-[#78716c]">No assets yet</p>
+                <p className="py-4 text-center text-sm text-[#6b5f50]">No assets yet</p>
               ) : (
-                <div className="divide-y divide-[#dedad4]">
+                <div className="divide-y divide-[#252220]">
                   {assets.slice(0, 5).map(asset => (
                     <div key={asset.id} className="flex items-center justify-between gap-3 py-2.5">
-                      <span className="truncate text-sm text-[#1c1917]">{asset.name}</span>
+                      <span className="truncate text-sm text-[#f5f0e8]">{asset.name}</span>
                       <Badge label={asset.status} />
                     </div>
                   ))}
@@ -217,12 +208,12 @@ const Dashboard = () => {
 
             <ChartCard title="Recent Tickets">
               {tickets.length === 0 ? (
-                <p className="py-4 text-center text-sm text-[#78716c]">No tickets yet</p>
+                <p className="py-4 text-center text-sm text-[#6b5f50]">No tickets yet</p>
               ) : (
-                <div className="divide-y divide-[#dedad4]">
+                <div className="divide-y divide-[#252220]">
                   {tickets.slice(0, 5).map(ticket => (
                     <div key={ticket.id} className="flex items-center justify-between gap-3 py-2.5">
-                      <span className="truncate text-sm text-[#1c1917]">{ticket.title}</span>
+                      <span className="truncate text-sm text-[#f5f0e8]">{ticket.title}</span>
                       <Badge label={ticket.status} />
                     </div>
                   ))}

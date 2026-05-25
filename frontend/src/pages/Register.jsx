@@ -14,8 +14,8 @@ const INDUSTRIES = [
   { value: 'other', label: 'Other' },
 ];
 
-const inputCls = 'w-full rounded-xl border border-[#cac5bf] bg-white px-4 py-2.5 text-sm text-[#1c1917] placeholder:text-[#78716c] outline-none transition focus:border-[#3b82f6]/60 focus:ring-2 focus:ring-[#3b82f6]/20 box-border';
-const labelCls = 'mb-1.5 block text-xs font-medium text-[#44403c]';
+const inputCls = 'w-full rounded-xl border border-[#3a3530] bg-[#1c1a17] px-4 py-2.5 text-sm text-[#f5f0e8] placeholder:text-[#6b5f50] outline-none transition focus:border-[#f59e0b]/60 focus:ring-2 focus:ring-[#f59e0b]/20 box-border';
+const labelCls = 'mb-1.5 block text-xs font-medium text-[#a89880]';
 
 const Register = () => {
   const [form, setForm] = useState({ org_name: '', industry: 'technology', name: '', email: '', password: '' });
@@ -46,23 +46,23 @@ const Register = () => {
       <div className="w-full max-w-md">
 
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#3b82f6]/15 border border-[#3b82f6]/20">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f59e0b]/15 border border-[#f59e0b]/20">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
               <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-[#1c1917]">Create your organization</h1>
-          <p className="mt-1 text-sm text-[#57534e]">Set up your workspace in under a minute</p>
+          <h1 className="text-xl font-bold text-[#f5f0e8]">Create your organization</h1>
+          <p className="mt-1 text-sm text-[#8a7965]">Set up your workspace in under a minute</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="rounded-2xl border border-[#cac5bf] bg-white p-7">
+        <form onSubmit={handleSubmit} className="rounded-2xl border border-[#3a3530] bg-[#1c1a17] p-7">
           {error && (
             <div className="mb-5 rounded-xl border border-[#ef4444]/30 bg-[#ef4444]/10 px-4 py-2.5 text-sm text-[#ef4444]">{error}</div>
           )}
 
           <div className="mb-5 space-y-4">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">Organization</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6b5f50]">Organization</p>
             <div>
               <label className={labelCls}>Organization name</label>
               <input className={inputCls} type="text" required placeholder="Acme Corp / The Midnight Band / …"
@@ -73,14 +73,14 @@ const Register = () => {
               <select className={`${inputCls} cursor-pointer`} value={form.industry} onChange={set('industry')}>
                 {INDUSTRIES.map(i => <option key={i.value} value={i.value}>{i.label}</option>)}
               </select>
-              <p className="mt-1.5 text-[11px] text-[#78716c]">Assets and AI triage will be tailored to your industry.</p>
+              <p className="mt-1.5 text-[11px] text-[#6b5f50]">Assets and AI triage will be tailored to your industry.</p>
             </div>
           </div>
 
-          <div className="my-5 border-t border-[#cac5bf]" />
+          <div className="my-5 border-t border-[#3a3530]" />
 
           <div className="space-y-4">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#78716c]">Admin account</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6b5f50]">Admin account</p>
             <div>
               <label className={labelCls}>Your name</label>
               <input className={inputCls} type="text" required placeholder="Jane Smith"
@@ -99,17 +99,17 @@ const Register = () => {
           </div>
 
           <button type="submit" disabled={loading}
-            className="mt-6 w-full rounded-xl bg-[#3b82f6] py-3 text-sm font-semibold text-white transition hover:bg-[#2563eb] active:scale-[0.98] disabled:opacity-60">
+            className="mt-6 w-full rounded-xl bg-[#f59e0b] py-3 text-sm font-semibold text-white transition hover:bg-[#d97706] active:scale-[0.98] disabled:opacity-60">
             {loading ? 'Creating…' : 'Create organization'}
           </button>
         </form>
 
-        <p className="mt-5 text-center text-sm text-[#57534e]">
+        <p className="mt-5 text-center text-sm text-[#8a7965]">
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-[#3b82f6] hover:underline">Sign in</Link>
+          <Link to="/login" className="font-medium text-[#f59e0b] hover:underline">Sign in</Link>
         </p>
-        <p className="mt-2 text-center text-sm text-[#57534e]">
-          <Link to="/" className="hover:text-[#44403c] transition-colors">← Back to home</Link>
+        <p className="mt-2 text-center text-sm text-[#8a7965]">
+          <Link to="/" className="hover:text-[#a89880] transition-colors">← Back to home</Link>
         </p>
       </div>
     </div>

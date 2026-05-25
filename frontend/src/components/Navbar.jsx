@@ -28,8 +28,8 @@ const Navbar = () => {
       to={to}
       className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
         isActive(to)
-          ? 'bg-[#3b82f6]/12 text-[#3b82f6]'
-          : 'text-[#44403c] hover:bg-[#dedad4] hover:text-[#1c1917]'
+          ? 'bg-[#f59e0b]/12 text-[#f59e0b]'
+          : 'text-[#a89880] hover:bg-[#252220] hover:text-[#f5f0e8]'
       }`}
     >
       {label}
@@ -37,22 +37,21 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[#cac5bf] bg-white/90 backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 border-b border-[#3a3530] bg-[#0f0e0c]/90 backdrop-blur-xl">
       <div className="mx-auto flex h-14 w-full max-w-350 items-center justify-between px-4 sm:px-6 lg:px-8">
 
-        {/* Left: brand + links */}
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#3b82f6]/15 border border-[#3b82f6]/20">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#f59e0b]/15 border border-[#f59e0b]/20">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
                 <path d="m3.3 7 8.7 5 8.7-5M12 22V12" />
               </svg>
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="text-sm font-semibold text-[#1c1917]">{org?.name || 'AssetFlow'}</span>
+              <span className="text-sm font-semibold text-[#f5f0e8]">{org?.name || 'AssetFlow'}</span>
               {org?.industry && (
-                <span className="text-[10px] font-medium text-[#3b82f6]/70">{INDUSTRY_LABELS[org.industry] || org.industry}</span>
+                <span className="text-[10px] font-medium text-[#f59e0b]/70">{INDUSTRY_LABELS[org.industry] || org.industry}</span>
               )}
             </div>
           </div>
@@ -65,14 +64,13 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Right: user chip + logout */}
         <div className="flex items-center gap-2.5">
-          <div className="hidden rounded-full border border-[#cac5bf] bg-white px-3 py-1.5 sm:flex items-center gap-2">
-            <div className="h-5 w-5 rounded-full bg-[#3b82f6]/15 flex items-center justify-center text-[9px] font-bold text-[#3b82f6]">
+          <div className="hidden rounded-full border border-[#3a3530] bg-[#1c1a17] px-3 py-1.5 sm:flex items-center gap-2">
+            <div className="h-5 w-5 rounded-full bg-[#f59e0b]/15 flex items-center justify-center text-[9px] font-bold text-[#f59e0b]">
               {user.name?.charAt(0).toUpperCase()}
             </div>
-            <span className="text-xs text-[#44403c]">
-              {user.name} <span className="text-[#78716c]">· {user.role}</span>
+            <span className="text-xs text-[#a89880]">
+              {user.name} <span className="text-[#6b5f50]">· {user.role}</span>
             </span>
           </div>
           <button
